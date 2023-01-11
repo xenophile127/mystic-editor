@@ -852,7 +852,8 @@ def main(argv):
     vaPorAddr = mystic.romSplitter.burnSpecialItems(basePath+'/items/10_specialItems.txt', nroBank, vaPorAddr)
 
 #    mystic.romSplitter.burnFont()
-    mystic.romSplitter.burnTilesets()
+#    mystic.romSplitter.burnTilesets()
+    mystic.romSplitter.burnTilesetsNew()
 
     # y tabla de experiencia
     mystic.romSplitter.burnExpTable(basePath+'/exp.txt')

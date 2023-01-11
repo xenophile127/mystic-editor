@@ -557,8 +557,8 @@ def exportTilesetsNew():
   # para cada uno de los tilesets de mapa
   cantMapTilesets = len(mystic.address.mapTilesetsAddr)
   for nroMapTileset in range(0,cantMapTilesets):
+
     nroBank,addr = mystic.address.mapTilesetsAddr[nroMapTileset]
-    print(hex(addr))
     tileset = mystic.tileset.Tileset(16, 16)
     bank = mystic.romSplitter.banks[nroBank]
     array = bank[addr:addr+0x1000]
@@ -568,6 +568,33 @@ def exportTilesetsNew():
 
     mystic.romSplitter.map_tilesets.append(tileset)
 
+
+def burnTilesetsNew():
+
+  basePath = mystic.address.basePath
+  path = basePath + '/tilesets'
+ 
+  # for each of the tilesets
+  # para cada uno de los tilesets
+  cantTilesets = len(mystic.address.tilesetsAddr)
+  for nroTileset in range(0,cantTilesets):
+
+    nroBank,addr = mystic.address.tilesetsAddr[nroTileset]
+    tileset = mystic.tileset.Tileset(16, 64 - (addr // 256))
+    tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
+    array = tileset.encodeRom()
+    mystic.romSplitter.burnBank(nroBank, addr, array)
+
+  # for each of the map tilesets
+  # para cada uno de los tilesets de mapa
+  cantMapTilesets = len(mystic.address.mapTilesetsAddr)
+  for nroMapTileset in range(0,cantMapTilesets):
+
+    nroBank,addr = mystic.address.mapTilesetsAddr[nroMapTileset]
+    tileset = mystic.tileset.Tileset(16, 16)
+    tileset.importPngFile(path + '/tileset_map_{:02}.png'.format(nroMapTileset))
+    array = tileset.encodeRom()
+    mystic.romSplitter.burnBank(nroBank, addr, array)
 
 def burnTilesets():
 

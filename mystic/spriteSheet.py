@@ -389,7 +389,8 @@ class SpriteSheet:
 
     tileData = []
 
-    baseTile = mystic.romSplitter.baseTiles[self.nroTileset]
+#    baseTile = mystic.romSplitter.baseTiles[self.nroTileset]
+    baseTile = 0
 
     tiles = myroot[1][0].text
 #    print('tiles: ' + tiles)
