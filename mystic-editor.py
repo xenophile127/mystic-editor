@@ -737,7 +737,8 @@ def main(argv):
 
     print('exportando tilesets')
     # exporto los tilesets
-    mystic.romSplitter.exportTilesets()
+    #mystic.romSplitter.exportTilesets()
+    mystic.romSplitter.exportTilesetsNew()
     # y la tabla de experiencia
     mystic.romSplitter.exportExpTable()
 

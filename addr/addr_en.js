@@ -26,5 +26,18 @@ addrs =
   "addr_exp_table": "08:0dd6",
   "addr_script_addr_dic": "08:0f05",
   "cant_scripts": 1354,
+  "addr_tileset": [
+    "08:1a00",
+    "09:0900",
+    "0a:0000",
+    "0b:0c00"
+  ],
+  "addr_tileset_map": [
+    "0c:0000",
+    "0c:1000",
+    "0c:2000",
+    "0c:3000",
+    "0b:0000"
+  ],
   "addr_music": "0f:0a12"
 }

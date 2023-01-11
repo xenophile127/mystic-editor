@@ -20,9 +20,10 @@ import mystic.ippy
 #self.rom = []
 # los bancos
 banks = []
-# los cinco tilesets
-#tilesets = []
+# los cuatro tilesets
 tilesets = None
+# los tilesets de mapa
+map_tilesets = None
 # los cinco spriteSheets
 spriteSheets = []
 # los mapas
@@ -524,6 +525,48 @@ def exportTilesets():
 
   # set the tilesets on the romSplitter
   mystic.romSplitter.tilesets = tileset
+
+def exportTilesetsNew():
+  """ export the tilesets from the main graphics banks, and the tilesets used by the maps """
+
+  basePath = mystic.address.basePath
+  path = basePath + '/tilesets'
+  # si el directorio no existía
+  if not os.path.exists(path):
+    # lo creo
+    os.makedirs(path)
+
+  mystic.romSplitter.tilesets = []
+  # for each of the tilesets
+  # para cada uno de los tilesets
+  cantTilesets = len(mystic.address.tilesetsAddr)
+  for nroTileset in range(0,cantTilesets):
+
+    nroBank,addr = mystic.address.tilesetsAddr[nroTileset]
+    tileset = mystic.tileset.Tileset(16, 64 - (addr // 256))
+    bank = mystic.romSplitter.banks[nroBank]
+    array = bank[addr:0x4000]
+    tileset.decodeRom(array)
+    tileset.exportPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
+    tileset.exportTiledXml(path + '/tileset_{:02}.tsx'.format(nroTileset))
+
+    mystic.romSplitter.tilesets.append(tileset)
+
+  mystic.romSplitter.map_tilesets = []
+  # for each of the map tilesets
+  # para cada uno de los tilesets de mapa
+  cantMapTilesets = len(mystic.address.mapTilesetsAddr)
+  for nroMapTileset in range(0,cantMapTilesets):
+    nroBank,addr = mystic.address.mapTilesetsAddr[nroMapTileset]
+    print(hex(addr))
+    tileset = mystic.tileset.Tileset(16, 16)
+    bank = mystic.romSplitter.banks[nroBank]
+    array = bank[addr:addr+0x1000]
+    tileset.decodeRom(array)
+    tileset.exportPngFile(path + '/tileset_map_{:02}.png'.format(nroMapTileset))
+    tileset.exportTiledXml(path + '/tileset_map_{:02}.tsx'.format(nroMapTileset))
+
+    mystic.romSplitter.map_tilesets.append(tileset)
 
 
 def burnTilesets():

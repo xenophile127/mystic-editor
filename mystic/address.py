@@ -110,6 +110,16 @@ def decodeJs(filepath):
   mystic.address.addrScriptAddrDic = (int(address['addr_script_addr_dic'][0:2],16), int(address['addr_script_addr_dic'][3:7],16))
   mystic.address.cantScripts = address['cant_scripts']
 
+  mystic.address.tilesetsAddr = []
+  for strAddr in address['addr_tileset']:
+    addr = (int(strAddr[0:2],16), int(strAddr[3:7],16))
+    mystic.address.tilesetsAddr.append(addr)
+
+  mystic.address.mapTilesetsAddr = []
+  for strAddr in address['addr_tileset_map']:
+    addr = (int(strAddr[0:2],16), int(strAddr[3:7],16))
+    mystic.address.mapTilesetsAddr.append(addr)
+
   mystic.address.addrMusic = (int(address['addr_music'][0:2],16), int(address['addr_music'][3:7],16))
 
 
@@ -143,6 +153,16 @@ def encodeJs(filepath):
 
   address['addr_script_addr_dic'] = '{:02x}:{:04x}'.format(addrScriptAddrDic[0], addrScriptAddrDic[1])
   address['cant_scripts'] = cantScripts
+
+  address['addr_tileset'] = []
+  for addr in tilesetsAddr:
+    strAddr = '{:02x}:{:04x}'.format(addr[0], addr[1])
+    address['addr_tileset'].append(strAddr)
+
+  address['addr_tileset_map'] = []
+  for addr in mapTilesetAddr:
+    strAddr = '{:02x}:{:04x}'.format(addr[0], addr[1])
+    address['addr_tileset_map'].append(strAddr)
 
   address['addr_music'] = '{:02x}:{:04x}'.format(addrMusic[0], addrMusic[1])
 

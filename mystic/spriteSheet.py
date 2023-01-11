@@ -220,6 +220,10 @@ class SpriteSheet:
     tileset = mystic.romSplitter.tilesets
     baseTile = mystic.romSplitter.baseTiles[self.nroTileset]
 
+    if (type(tileset) is list):
+      tileset = mystic.romSplitter.map_tilesets[self.nroTileset]
+      baseTile = 0
+
     # creo un array de tiles vacío 
     tiles = [None for i in range(0, 4*w*h)]
     # los ordeno con el orden preciso para que se visualize bien el .png
@@ -296,7 +300,6 @@ class SpriteSheet:
 
     root = ET.Element("map", version='1.9', tiledversion="1.9.0", orientation="orthogonal", renderorder="right-down", width=str(width), height=str(height), tilewidth="8", tileheight="8", infinite="0", nextlayerid="3", nextobjectid="14")
 
-#    tileset = ET.SubElement(root, "tileset", firstgid="1", source='../tilesets/tileset_{:02x}.tsx'.format(self.nroTileset))
     tileset = ET.SubElement(root, "tileset", firstgid="1", source='../tilesets/tilesets.tsx')
 
     layer1 = ET.SubElement(root, "layer", id=str(iidd), name="Tile Layer 1", width=str(width), height=str(height))
@@ -304,6 +307,10 @@ class SpriteSheet:
     data = ET.SubElement(layer1, "data", encoding="csv")
 
     baseTile = mystic.romSplitter.baseTiles[self.nroTileset]
+
+    if (type(tileset) is list):
+      tileset = ET.SubElement(root, "tileset", firstgid="1", source='../tilesets/tileset_map_{:02x}.tsx'.format(self.nroTileset))
+      baseTile = 0
 
     renglones = []
     renglones.append("")
