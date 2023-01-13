@@ -6,12 +6,14 @@ def romExpand():
 
   print('rom expanding...')
 
+  romExpand32Banks()
+
   # choose one (or none) of the following available rom expansions,
   # you can also make your own custom romExpand...()
 
 #  romExpandMoveMaps()
 #  romExpandMoveMusicBank()
-  romExpandMoveMusicBankAndExpandScriptsToFourBanks()
+#  romExpandMoveMusicBankAndExpandScriptsToFourBanks()
 #  romExpandIpsPatch('./roms/colorization/en_uk_256.ips')
 #  romExpandIpsPatch('./roms/colorization/en_uk_kkzero.ips')
 
