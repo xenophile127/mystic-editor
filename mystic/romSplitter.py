@@ -641,10 +641,12 @@ def burnSpriteSheets():
 
   sheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
   spriteSheets = []
+  cantSpriteSheets = len(mystic.address.spriteSheetsAddr)
   # para cada una de los cinco spriteSheets 
-  for nroSpriteSheet in range(0,5):
+  for nroSpriteSheet in range(0,cantSpriteSheets):
 
-    sheet = mystic.spriteSheet.SpriteSheet(16,8,nroSpriteSheet,sheetNames[nroSpriteSheet])
+    #sheet = mystic.spriteSheet.SpriteSheet(16,8,nroSpriteSheet,sheetNames[nroSpriteSheet])
+    sheet = mystic.spriteSheet.SpriteSheet(16,8,nroSpriteSheet,str(nroSpriteSheet))
 
     # decode from the .txt
 #    filepath = path + '/sheet_{:02x}.txt'.format(nroSpriteSheet)
