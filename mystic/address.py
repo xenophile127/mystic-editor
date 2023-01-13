@@ -120,6 +120,8 @@ def decodeJs(filepath):
     addr = (int(strAddr[0:2],16), int(strAddr[3:7],16))
     mystic.address.mapTilesetsAddr.append(addr)
 
+  mystic.address.addrScripts = (int(address['addr_scripts'][0:2],16), int(address['addr_scripts'][3:7],16))
+
   mystic.address.addrMusic = (int(address['addr_music'][0:2],16), int(address['addr_music'][3:7],16))
 
 
@@ -163,6 +165,8 @@ def encodeJs(filepath):
   for addr in mapTilesetAddr:
     strAddr = '{:02x}:{:04x}'.format(addr[0], addr[1])
     address['addr_tileset_map'].append(strAddr)
+
+  address['addr_scripts'] = '{:02x}:{:04x}'.format(addrMusic[0], addrScripts[1])
 
   address['addr_music'] = '{:02x}:{:04x}'.format(addrMusic[0], addrMusic[1])
 

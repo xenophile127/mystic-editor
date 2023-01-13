@@ -39,5 +39,6 @@ addrs =
     "0c:3000",
     "0b:0000"
   ],
+  "addr_scripts": "0d:0000",
   "addr_music": "0f:0a12"
 }
