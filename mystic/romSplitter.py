@@ -3722,6 +3722,9 @@ def _burnMapas(mapas):
 #  for nroMapa in range(0,1):
 
     mapa = mapas.mapas[nroMapa]
+
+    mapa.spriteAddr = mystic.address.spriteSheetsAddr[mapa.nroSpriteSheet][1] + 0x4000
+
     subArray = []
     subArray.append(0x00) 
     subArray.append(mapa.nroSpriteSheet*0x10)
