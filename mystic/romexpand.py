@@ -1,6 +1,7 @@
 
 import mystic.romSplitter
 import mystic.ippy
+import mystic.address
 
 def romExpand():
 
@@ -11,6 +12,7 @@ def romExpand():
   # choose one (or none) of the following available rom expansions,
   # you can also make your own custom romExpand...()
 
+#  romExpandMoveSpriteSheets()
 #  romExpandMoveMaps()
 #  romExpandMoveMusicBank()
 #  romExpandMoveMusicBankAndExpandScriptsToFourBanks()
@@ -38,6 +40,20 @@ def romExpand32Banks():
   for i in range(len(mystic.romSplitter.banks), 32):
     clean = [0x00] * 0x4000
     mystic.romSplitter.banks.append(clean)
+
+#################################################
+def romExpandMoveSpriteSheets():
+  """ Handles clearing the old area, and changing bank references. """
+  bank = mystic.romSplitter.banks[8]
+
+  for i in range(0x00b0,0x00b0+561*6):
+    bank[i] = 0xff
+
+  bank = mystic.romSplitter.banks[0]
+  nroBank,addr = mystic.address.spriteSheetsAddr[0]
+  bank_reference_addresses = [0x0523, 0x572, 0x16b1, 0x1a46, 0x1b76]
+  for i in bank_reference_addresses:
+    bank[i] = nroBank
 
 #################################################
 def romExpandMoveMaps():
