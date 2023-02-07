@@ -12,8 +12,8 @@ def romExpand():
   # choose one (or none) of the following available rom expansions,
   # you can also make your own custom romExpand...()
 
-#  romExpandMoveMapTilesets()
-#  romExpandMoveSpriteSheets()
+  romExpandMoveMapTilesets()
+  romExpandMoveSpriteSheets()
 #  romExpandMoveMaps()
 #  romExpandMoveMusicBank()
 #  romExpandMoveMusicBankAndExpandScriptsToFourBanks()
@@ -35,7 +35,7 @@ def romExpand32Banks():
   # RAM Size = 02
   bank0[0x0149] = 0x02
   # Header Checksum
-  bank0[0x014d] = 0xb8
+  #bank0[0x014d] = 0xb8
 
   # we add 16 more banks
   for i in range(len(mystic.romSplitter.banks), 32):
@@ -68,11 +68,21 @@ def romExpandMoveMapTilesets():
   for i in range(0,0x0c00):
     bank[i] = 0xff
 
-  bank = mystic.romSplitter.banks[0]
   nroBank,addr = mystic.address.mapTilesetsAddr[0]
-  bank_reference_addresses = [0x1bf6]
+
+  bank = mystic.romSplitter.banks[0]
+  bank_reference_addresses = [0x1bf6, 0x1c27]
   for i in bank_reference_addresses:
     bank[i] = nroBank
+
+  bank = mystic.romSplitter.banks[2]
+  bank[0x020e] = nroBank
+
+  # There's a bug with animated tiles in any map tilesets outside the first bank.
+  # This doesn't matter in vainilla because the one tileset stored in the second bank has no animated tiles.
+  romExpandIpsPatch('patch-animation.ips')
+  # This patch fixes the two-frame animations. It's messy. It also hard-codes a reference to bank 1c.
+  romExpandIpsPatch('patch-twoframe.ips')
 
 #################################################
 def romExpandMoveMaps():
