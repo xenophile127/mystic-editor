@@ -13,6 +13,8 @@ import mystic.inventory
 import mystic.scripts
 import mystic.maps
 import mystic.music
+import mystic.audio
+import mystic.sounds
 import mystic.ippy
 
 # la rom
@@ -145,7 +147,7 @@ def gameGenieHacks():
   bank2[0x396c] = 0x94
 
 
-def exportGbsRom(filepath):
+def exportSongsRom(filepath):
   """ exporta a una rom musical gbs """
 
   # cargo el gbs rom
@@ -159,6 +161,55 @@ def exportGbsRom(filepath):
   gbsRom.extend(bank0f)
   # creo la rom gbs de salida
   mystic.util.arrayToFile(gbsRom, filepath)
+
+
+def exportSoundsRom(filepath):
+  """ exporta a una rom con efectos de sonido """
+
+  # cargo el gbs rom
+#  gbsRom = mystic.util.fileToArray('./roms/audio.gb')
+  # me quedo con el bank00
+#  gbsRom = gbsRom[0:0x4000]
+  gbsRom = mystic.util.fileToArray('./gbsBank00.bin')
+
+#  titulo = 'Final Fantasy Adventure'
+  titulo = 'Mystic Sounds'
+  listTitulo = list(titulo.encode())
+  listTitulo.extend([0x00 for i in range(0, 32-len(listTitulo))])
+
+#  autor = 'Kenji Ito'
+  autor = ''
+  listAutor = list(autor.encode())
+  listAutor.extend([0x00 for i in range(0, 32-len(listAutor))])
+
+#  date = '1991 Square'
+  date = ''
+  listDate = list(date.encode())
+  listDate.extend([0x00 for i in range(0, 32-len(listDate))])
+
+  for i in range(0, 32):
+    gbsRom[0x3F74 + i] = listTitulo[i]
+    gbsRom[0x3F94 + i] = listAutor[i]
+    gbsRom[0x3FB4 + i] = listDate[i]
+
+  cantSounds = 37
+  # seteo los números de efectos
+  for i in range(0,cantSounds):
+    gbsRom[0x3F00+i] = i+1
+  # cambio 1E por 25 para setear la cantidad de efectos de sonido
+  gbsRom[0x3F68] = 0x25
+  # cambio E2 por 00 para que los números de efectos los busque a partir del 3F00
+  gbsRom[0x3FD5] = 0x00
+  # cambio 90 por 92 para cambiar música por efectos de sonido
+  gbsRom[0x3FE0] = 0x92
+
+  # agarro el bank0f
+  bank0f = mystic.romSplitter.banks[0x0f]
+  # los concateno
+  gbsRom.extend(bank0f)
+  # creo la rom gbs de salida
+  mystic.util.arrayToFile(gbsRom, filepath)
+
 
 
 def testRom(filepath, emulator):
@@ -1231,6 +1282,92 @@ def exportMonstruoGrandeDosTiles():
     array = array[3:]
 
 
+def exportAudioJson():
+  """ exporta el audio en formato json """
+
+  basePath = mystic.address.basePath
+  path = basePath + '/audio'
+  # si el directorio no existía
+  if not os.path.exists(path):
+    # lo creo
+    os.makedirs(path)
+
+  nroBank,addrMusic = mystic.address.addrMusic
+  # cargo el banco 16 con las canciones
+  bank = mystic.romSplitter.banks[nroBank]
+
+  canciones = mystic.music.Canciones()
+  canciones.decodeRom(bank,addrMusic)
+
+  songsData = {}
+
+  for i in range(0,30):
+    cancion = canciones.canciones[i]
+
+    lines = cancion.encodeTxt()
+    strCancion = '\n'.join(lines)
+#    print('strCancion: ' + strCancion)
+
+#    songsData[i] = lines
+
+    songsData[i+1] = {}
+
+    subLines = cancion.melody2.encodeTxt()
+    songsData[i+1][2] = subLines[2:] # (salteo header)
+    subLines = cancion.melody1.encodeTxt()
+    songsData[i+1][1] = subLines[2:]
+    subLines = cancion.melody3.encodeTxt()
+    songsData[i+1][3] = subLines[2:]
+
+
+
+  import json
+  # exporto a json
+  strJson = json.dumps(songsData, indent=2)
+#  strJson = json.dumps(data)
+  f = open(path + '/audio_noedit.js', 'w', encoding="utf-8")
+  f.write('audio = \n' + strJson)
+  f.close()
+
+def exportSongsXml():
+  """ exporta las canciones en formato xml """
+
+  basePath = mystic.address.basePath
+  path = basePath + '/audio'
+  # si el directorio no existía
+  if not os.path.exists(path):
+    # lo creo
+    os.makedirs(path)
+
+  nroBank,addrMusic = mystic.address.addrMusic
+  # cargo el banco 16 con las canciones
+  bank = mystic.romSplitter.banks[nroBank]
+
+  canciones = mystic.music.Canciones()
+  canciones.decodeRom(bank,addrMusic)
+
+
+  import xml.etree.cElementTree as ET
+  root = ET.Element("songs")
+
+  for i in range(0,30):
+    cancion = canciones.canciones[i]
+
+    lines = cancion.encodeTxt()
+    strCancion = '\n'.join(lines)
+#    print('strCancion: ' + strCancion)
+
+    song = ET.SubElement(root, "song")
+    song.text = strCancion
+
+  tree = ET.ElementTree(root)
+#  printed_xml = tree.tostring(root, encoding='UTF-8', xml_declaration=True, pretty_print=True)
+  ET.indent(root, space=" ", level=0)
+  tree.write('./en/audio/songs.xml', xml_declaration=True, encoding='utf-8')
+#  print('ET: ' + str(ET.tostring(root, encoding='UTF-8')))
+
+
+
 def exportSongs(exportLilypond=False):
   """ exporta las canciones """
 
@@ -1250,7 +1387,7 @@ def exportSongs(exportLilypond=False):
 
   lines = canciones.encodeTxt()
   strCanciones = '\n'.join(lines)
-  f = open(path + '/songs.txt', 'w', encoding="utf-8")
+  f = open(path + '/01_songs.txt', 'w', encoding="utf-8")
   f.write(strCanciones)
   f.close()
 
@@ -1287,8 +1424,7 @@ def exportSongs(exportLilypond=False):
       # exporto lilypond!
       cancion.exportLilypond()
 
-
-def burnSongs(filepath):
+def burnSongs(filepath, nroBank, addrMusic):
   """ burn the songs into the rom """
 
   canciones = mystic.music.Canciones()
@@ -1296,14 +1432,195 @@ def burnSongs(filepath):
   f = open(filepath, 'r', encoding="utf-8")
   lines = f.readlines()
   f.close()
+  # decode the songs from the txt
   canciones.decodeTxt(lines)
 
+  # export to lilypond
+  canciones.exportLilypond()
 
   # address of the pointer table
-  nroBank,addrMusic = mystic.address.addrMusic
+#  nroBank,addrMusic = mystic.address.addrMusic
   arrayMusic = canciones.encodeRom(addrMusic)
 
+  # burn into the rom
   mystic.romSplitter.burnBank(nroBank, addrMusic, arrayMusic)
+
+  vaPorAddr = addrMusic + len(arrayMusic)
+  return vaPorAddr
+
+def exportAudio():
+  """ exports audio settings """
+
+  basePath = mystic.address.basePath
+  path = basePath + '/audio'
+  # si el directorio no existía
+  if not os.path.exists(path):
+    # lo creo
+    os.makedirs(path)
+
+#  nroBank,addrAudio = mystic.address.addrAudio
+  nroBank,addrAudio = 0x0f, 0x3a4f
+  # cargo el banco 16 con los sonidos
+  bank = mystic.romSplitter.banks[nroBank]
+  vaPorAddr = addrAudio
+
+  vibratos = mystic.audio.Vibratos()
+  vibratos.decodeRom(bank, addrAudio)
+
+  lines = vibratos.encodeTxt()
+#  lines.append('')
+#  lines.append('')
+
+  strVibrato = '\n'.join(lines)
+  f = open(path + '/02_vibrato.txt', 'w', encoding="utf-8")
+  f.write(strVibrato)
+  f.close()
+
+  array = vibratos.encodeRom(vaPorAddr)
+  vaPorAddr += len(array)
+#  print('vaPorAddr: {:04x}'.format(vaPorAddr))
+
+  volumes = mystic.audio.Volumes()
+  volumes.decodeRom(bank, vaPorAddr)
+  lines = volumes.encodeTxt()
+
+  strVolume = '\n'.join(lines)
+  f = open(path + '/03_volume.txt', 'w', encoding="utf-8")
+  f.write(strVolume)
+  f.close()
+
+  array = volumes.encodeRom(vaPorAddr)
+  vaPorAddr += len(array)
+#  print('vaPorAddr: {:04x}'.format(vaPorAddr))
+
+  waves = mystic.audio.Waves()
+  waves.decodeRom(bank, vaPorAddr)
+  lines = waves.encodeTxt()
+
+  strWaves = '\n'.join(lines)
+  f = open(path + '/04_waves.txt', 'w', encoding="utf-8")
+  f.write(strWaves)
+  f.close()
+
+#  array = waves.encodeRom(vaPorAddr)
+#  vaPorAddr += len(array)
+#  print('vaPorAddr: {:04x}'.format(vaPorAddr))
+
+
+
+def burnAudio(pathVibrato, pathVolume, pathWaves):
+  """ burn the audio settings """
+
+  array = []
+
+  vibratos = mystic.audio.Vibratos()
+
+  f = open(pathVibrato, 'r', encoding="utf-8")
+  lines = f.readlines()
+  f.close()
+  # decode the audio from the txt
+  vibratos.decodeTxt(lines)
+
+#  lines = vibratos.encodeTxt()
+#  strVibratos = '\n'.join(lines)
+#  print('strVibratos: ' + strVibratos)
+
+  # address of the pointer table
+#  nroBank,addrAudio = mystic.address.addrAudio
+  nroBank,addrAudio = 0x0f, 0x3a4f
+  vaPorAddr = addrAudio
+
+  arrayVibrato = vibratos.encodeRom(vaPorAddr)
+  array.extend(arrayVibrato)
+  vaPorAddr += len(arrayVibrato)
+#  print('vaPorAddr: {:04x}'.format(vaPorAddr))
+
+
+
+  volumes = mystic.audio.Volumes()
+
+  f = open(pathVolume, 'r', encoding="utf-8")
+  lines = f.readlines()
+  f.close()
+  # decode the audio from the txt
+  volumes.decodeTxt(lines)
+
+  arrayVolume = volumes.encodeRom(vaPorAddr)
+#  print('arrayVolume: ' + mystic.util.strHexa(arrayVolume))
+  array.extend(arrayVolume)
+  vaPorAddr += len(arrayVolume)
+#  print('vaPorAddr: {:04x}'.format(vaPorAddr))
+
+
+
+  waves = mystic.audio.Waves()
+
+  f = open(pathWaves, 'r', encoding="utf-8")
+  lines = f.readlines()
+  f.close()
+  # decode the audio from the txt
+  waves.decodeTxt(lines)
+
+  arrayWaves = waves.encodeRom(vaPorAddr)
+#  print('arrayWaves: ' + mystic.util.strHexa(arrayWaves))
+  array.extend(arrayWaves)
+  vaPorAddr += len(arrayWaves)
+#  print('vaPorAddr: {:04x}'.format(vaPorAddr))
+
+  # burn into the rom
+  mystic.romSplitter.burnBank(0xf, addrAudio, array)
+
+
+
+def exportSounds():
+  """ exports the sound effects """
+
+  basePath = mystic.address.basePath
+  path = basePath + '/audio'
+  # si el directorio no existía
+  if not os.path.exists(path):
+    # lo creo
+    os.makedirs(path)
+
+  nroBank,addrSounds = mystic.address.addrSounds
+  # cargo el banco 16 con los sonidos
+  bank = mystic.romSplitter.banks[nroBank]
+
+  sounds = mystic.sounds.Sounds()
+  sounds.decodeRom(bank,addrSounds)
+
+  lines = sounds.encodeTxt()
+#  lines.append('')
+#  lines.append('')
+
+  strSFX = '\n'.join(lines)
+  f = open(path + '/05_sounds.txt', 'w', encoding="utf-8")
+  f.write(strSFX)
+  f.close()
+
+def burnSounds(filepath):
+  """ burn the SFX into the rom """
+
+  sounds = mystic.sounds.Sounds()
+
+  f = open(filepath, 'r', encoding="utf-8")
+  lines = f.readlines()
+  f.close()
+  # decode the songs from the txt
+  sounds.decodeTxt(lines)
+
+#  lines = sounds.encodeTxt()
+#  strSFX = '\n'.join(lines)
+#  print('strSFX: ' + strSFX)
+
+  # address of the pointer table
+  nroBank,addrSounds = mystic.address.addrSounds
+  arraySounds = sounds.encodeRom(addrSounds)
+
+#  print('arraySounds: ' + mystic.util.strHexa(arraySounds))
+  # burn into the rom
+  mystic.romSplitter.burnBank(nroBank, addrSounds, arraySounds)
+
 
 def exportSpriteSheetHero():
   """ exporta sprite sheet del heroe """
@@ -2329,8 +2646,6 @@ def exportExpTable():
 
 def burnExpTable(filepath):
   """ quema el exp.txt en la rom """
-
-  print('quemando la tabla de experiencia')
 
   f = open(filepath, 'r', encoding="utf-8")
   lines = f.readlines()

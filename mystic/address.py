@@ -48,6 +48,7 @@ cantScripts = 0x054a
 
 # the songs
 addrMusic = (0x0f, 0x0a12)
+addrSounds = (0x0f, 0x3b3c)
 
 def setRomPath(romPath):
 
@@ -213,4 +214,11 @@ def decodeTxt(lines):
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrMusic = (bank, offset)
 
-
+    elif(line.startswith('addrSounds')):
+      idx = line.index('=')
+      string = line[idx+1:].strip().strip('\"').strip('\'')
+      idx = string.index(':')
+      bank = int(string[idx-2:idx],16)
+      offset = int(string[idx+1:idx+5], 16)
+#      print('bank {:02x} offset {:04x}'.format(bank, offset))
+      mystic.address.addrSounds = (bank, offset)

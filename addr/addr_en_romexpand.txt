@@ -29,3 +29,4 @@ addrScriptAddrDic = 08:0f05
 cantScripts = 0x054a
 
 addrMusic = 1f:0a12
+addrSounds = 1f:3b3c

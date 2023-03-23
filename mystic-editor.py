@@ -667,9 +667,17 @@ def main(argv):
     mystic.romSplitter.exportMapas(exportPngFile=True)
 #    mystic.romSplitter.exportMapas(exportPngFile=False)
 
+    print('exporting songs...')
     # exporto la música
 #    mystic.romSplitter.exportSongs(exportLilypond=False)
     mystic.romSplitter.exportSongs(exportLilypond=True)
+
+    # exporto todo el audio en formato json
+    mystic.romSplitter.exportAudioJson()
+
+    print('exporting sounds...')
+    # exporto los efectos de sonido sfx
+    mystic.romSplitter.exportSounds()
 
     # termino el script
     sys.exit(0)
@@ -754,16 +762,24 @@ def main(argv):
     print('quemando scripts...')
     mystic.romSplitter.burnScripts(basePath + '/scripts/scripts.txt')
 
-    print('quemando songs...')
+    print('burning songs...')
+    nroBank, vaPorAddr = mystic.address.addrMusic
+#    print('addrMusic {:04x}'.format(vaPorAddr))
+
     # trata de mantener compatibilidad binaria con la rom original
-#    mystic.romSplitter.burnSongs(filepath=basePath+'/audio/songs.txt', ignoreAddrs=False)
-    # concatena todas las canciones, default para roms nuevas (no compatible con la original)
-#    mystic.romSplitter.burnSongs(filepath=basePath+'/audio/songs.txt', ignoreAddrs=True)
-    # compatible con la original (agrega los headers misteriosos sin uso)
-    mystic.romSplitter.burnSongs(filepath=basePath+'/audio/songs.txt')
+    vaPorAddr = mystic.romSplitter.burnSongs(basePath+'/audio/01_songs.txt', nroBank, vaPorAddr)
+#    print('vaPorAddr {:04x}'.format(vaPorAddr))
+
+    print('burning sounds...')
+    # quemo los efectos de sonido sfx
+    mystic.romSplitter.burnSounds(filepath=basePath+'/audio/05_sounds.txt')
+
 
     # exporto la gbs rom con música
-    mystic.romSplitter.exportGbsRom(basePath+'/audio.gb')
+    mystic.romSplitter.exportSongsRom(basePath+'/songs.gb')
+    # exporto la gbs rom con efectos de sonido
+    mystic.romSplitter.exportSoundsRom(basePath+'/sounds.gb')
+
 
     # Calculate and record the correct checksums for the header
     mystic.checksum.fixChecksums()
