@@ -28,4 +28,4 @@ expTable = 08:0dd6
 addrScriptAddrDic = 08:0f05
 cantScripts = 0x054a
 
-
+addrMusic = 1f:0a12
