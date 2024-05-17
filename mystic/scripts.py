@@ -847,9 +847,9 @@ class Comando:
       primer = self.nro // 0x10
       segund = self.nro % 0x10
 
-      actions = ['STEP_FORWARD', 'STEP_BACK', 'STEP_LEFT', 'STEP_RIGHT', 'LOOK_NORTH', 'LOOK_SOUTH', 'LOOK_EAST', 'LOOK_WEST', 'REMOVE', 'TELEPORT', 'WALK_FAST_SPEED', 'WALK_NORMAL_SPEED', 'SET_PARTNER_PERSONAJE', 'NOSE_D', 'NOSE_E', 'NOSE_F' ]
+      actions = ['STEP_FORWARD', 'STEP_BACK', 'STEP_LEFT', 'STEP_RIGHT', 'LOOK_NORTH', 'LOOK_SOUTH', 'LOOK_EAST', 'LOOK_WEST', 'REMOVE', 'TELEPORT', 'WALK_FAST_SPEED', 'WALK_NORMAL_SPEED', 'SET_EXTRASPECIAL_PERSONAJE', 'NOSE_D', 'NOSE_E', 'NOSE_F' ]
 
-      strExtra = 'PARTNER'
+      strExtra = 'EXTRASPECIAL'
       strAction = actions[segund]
       strCmd = strExtra + '_' + strAction
 
@@ -869,7 +869,7 @@ class Comando:
         self.size = 3
         self.strHex = mystic.util.strHexa(self.array[0:self.size])
 
-      elif(strAction in ['SET_PARTNER_PERSONAJE']):
+      elif(strAction in ['SET_EXTRASPECIAL_PERSONAJE']):
 
         arg = self.array[1]
         # turn extra1 into extra9 (extraspecial)
@@ -1706,7 +1706,7 @@ class Comando:
         self.sizeLines = 1
         self.sizeBytes = len(self.hexs)
 
-    elif(line.startswith('PARTNER')):
+    elif(line.startswith('EXTRASPECIAL')):
 
       idx0 = line.index('_')+1
       strAction = line[idx0:]
@@ -1715,7 +1715,7 @@ class Comando:
  
       if(strAction in ['STEP_FORWARD', 'STEP_BACK', 'STEP_LEFT', 'STEP_RIGHT', 'LOOK_NORTH', 'LOOK_SOUTH', 'LOOK_EAST', 'LOOK_WEST', 'REMOVE', 'WALK_FAST_SPEED', 'WALK_NORMAL_SPEED', 'NOSE_D', 'NOSE_E', 'NOSE_F']):
 
-        actions = ['STEP_FORWARD', 'STEP_BACK', 'STEP_LEFT', 'STEP_RIGHT', 'LOOK_NORTH', 'LOOK_SOUTH', 'LOOK_EAST', 'LOOK_WEST', 'REMOVE', 'TELEPORT', 'WALK_FAST_SPEED', 'WALK_NORMAL_SPEED', 'SET_PARTNER_PERSONAJE', 'NOSE_D', 'NOSE_E', 'NOSE_F']
+        actions = ['STEP_FORWARD', 'STEP_BACK', 'STEP_LEFT', 'STEP_RIGHT', 'LOOK_NORTH', 'LOOK_SOUTH', 'LOOK_EAST', 'LOOK_WEST', 'REMOVE', 'TELEPORT', 'WALK_FAST_SPEED', 'WALK_NORMAL_SPEED', 'SET_EXTRASPECIAL_PERSONAJE', 'NOSE_D', 'NOSE_E', 'NOSE_F']
         nroAction = actions.index(strAction)
 
         nroCmd = nroExtra * 0x10 + nroAction
@@ -1776,9 +1776,9 @@ class Comando:
         self.sizeLines = 1
         self.sizeBytes = len(self.hexs)
 
-    elif(line.startswith('SET_PARTNER_PERSONAJE')):
+    elif(line.startswith('SET_EXTRASPECIAL_PERSONAJE')):
 
-      argTxt = line[len('SET_PARTNER_PERSONAJE')+1:]
+      argTxt = line[len('SET_EXTRASPECIAL_PERSONAJE')+1:]
       arg = int(argTxt, 16)
 
       self.hexs.append(0x9c)
