@@ -65,8 +65,8 @@ class Scripts:
       script.nro = nroScript
 
       banco = 0x0d
-      if(addr >= 0x4000):
-        banco = 0x0e
+      while(addr >= 0x4000):
+        banco += 1
         addr -= 0x4000
       array = mystic.romSplitter.banks[banco]
       # creo un array desde donde empieza el script
