@@ -673,9 +673,6 @@ def main(argv):
 #    mystic.romSplitter.exportSongs(exportLilypond=False)
     mystic.romSplitter.exportSongs(exportLilypond=True)
 
-    # exporto las estadísticas del rom
-    mystic.romStats.exportPng()
-
     # termino el script
     sys.exit(0)
 
