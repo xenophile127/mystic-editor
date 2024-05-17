@@ -651,9 +651,6 @@ def main(argv):
     # exporto los monstruos grandes
     mystic.romSplitter.exportBosses()
 
-    # exporto el texto
-    mystic.romSplitter.exportTexto()
-
     # exporto las ventanas/paneles
     mystic.romSplitter.exportWindows()
 
