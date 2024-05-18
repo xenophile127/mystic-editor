@@ -166,7 +166,7 @@ class Scripts:
     # los renglones del script actual
     subLines = []
 
-    for line in lines:
+    for lineNumber, line in enumerate(lines):
       # comienza un nuevo script
       if('script:' in line):
 
@@ -174,11 +174,14 @@ class Scripts:
         if(script != None):
 
           # lo decodifico
-          script.decodeTxt(subLines)
+          script.decodeTxt(subLines, startLineNumber)
           # lo agrego a la lista
           self.scripts.append(script)
           # reinicio los renglones para el próximo script
           subLines = []
+
+        # For printing errors and warnings
+        startLineNumber = lineNumber + 2
 
         lineSplit = line.split()
         nroScript = int(lineSplit[2],16)
@@ -211,7 +214,7 @@ class Scripts:
           subLines.append(line)
 
     # lo decodifico
-    script.decodeTxt(subLines)
+    script.decodeTxt(subLines, startLineNumber)
     # lo agrego a la lista
     self.scripts.append(script)
     # reinicio los renglones para el próximo script
@@ -485,7 +488,7 @@ class Script:
 #        break
         return vaPorAddr
 
-  def decodeTxt(self, lines):
+  def decodeTxt(self, lines, startLineNumber):
     """ decodifica un script txt """
 
     # si está en NULL
@@ -503,8 +506,10 @@ class Script:
     # mientras queden renglones por procesar
     while(len(lines[idx:])>0):
 
+      lineNumber = startLineNumber + idx
+
       cmd = Comando(vaPorAddr)
-      cmd.decodeTxt(lines[idx:])
+      cmd.decodeTxt(lines[idx:], lineNumber)
 #      print('cmd: ' + str(cmd))
       idx += cmd.sizeLines
 
@@ -1380,7 +1385,7 @@ class Comando:
     return textMode
 
 
-  def decodeTxt(self, lines):
+  def decodeTxt(self, lines, startLineNumber):
     """ lo decodifica """
 
     self.textMode = False
@@ -1473,7 +1478,7 @@ class Comando:
           deep -= 1
 
       bloque = Script(self.addr + 3)
-      bloque.decodeTxt(bloqueLines)
+      bloque.decodeTxt(bloqueLines, startLineNumber+1)
       self.script = bloque
 
       self.hexs.append(0x03)
@@ -1516,7 +1521,7 @@ class Comando:
       self.hexs.append(0x01)
 
       bloque = Script(self.addr + 2)
-      bloque.decodeTxt(bloqueLines)
+      bloque.decodeTxt(bloqueLines, startLineNumber+1)
       self.script = bloque
 
 
@@ -1544,7 +1549,9 @@ class Comando:
 
       argsTxt = argTxt.split(' ')
       # elimino el último (está vacío, por el espacio al final antes del paréntesis)
-      argsTxt.pop()
+      removed = argsTxt.pop()
+      if(len(removed)):
+        print("WARNING: IF arguments not terminated with a space at line " + str(startLineNumber) + ": " + line)
 
       line0 = self.lines[0]
       origDeep = len(line0) - len(line0.lstrip(' '))
@@ -1584,7 +1591,7 @@ class Comando:
           args.append(arg)
 
         bloque = Script(self.addr + len(args) + 3)
-        bloque.decodeTxt(bloqueLines)
+        bloque.decodeTxt(bloqueLines, startLineNumber+1)
         self.script = bloque
 
       elif(line.startswith('IF_HAND(')):
@@ -1599,7 +1606,7 @@ class Comando:
           args.append(arg)
 
         bloque = Script(self.addr + len(args) + 3)
-        bloque.decodeTxt(bloqueLines)
+        bloque.decodeTxt(bloqueLines, startLineNumber+1)
         self.script = bloque
 
       elif(line.startswith('IF_INVENTORY(')):
@@ -1614,7 +1621,7 @@ class Comando:
           args.append(arg)
 
         bloque = Script(self.addr + len(args) + 3)
-        bloque.decodeTxt(bloqueLines)
+        bloque.decodeTxt(bloqueLines, startLineNumber+1)
         self.script = bloque
 
       elif(line.startswith('IF_TRIGGERED_ON_BY(')):
@@ -1629,7 +1636,7 @@ class Comando:
           args.append(arg)
 
         bloque = Script(self.addr + len(args) + 3)
-        bloque.decodeTxt(bloqueLines)
+        bloque.decodeTxt(bloqueLines, startLineNumber+1)
         self.script = bloque
 
       elif(line.startswith('IF_TRIGGERED_OFF_BY(')):
@@ -1644,7 +1651,7 @@ class Comando:
           args.append(arg)
 
         bloque = Script(self.addr + len(args) + 3)
-        bloque.decodeTxt(bloqueLines)
+        bloque.decodeTxt(bloqueLines, startLineNumber+1)
         self.script = bloque
 
       self.hexs.extend(args)
