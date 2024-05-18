@@ -491,8 +491,11 @@ class Script:
   def decodeTxt(self, lines, startLineNumber):
     """ decodifica un script txt """
 
+    indent = 0
+
     # si está en NULL
     if(len(lines)>0):
+      indent = len(lines[0]) - len(lines[0].lstrip(' '))
       firstLine = lines[0].strip()
       if(firstLine == 'NULL'):
         # seteo el addr en 0
@@ -507,6 +510,9 @@ class Script:
     while(len(lines[idx:])>0):
 
       lineNumber = startLineNumber + idx
+
+      if(len(lines[idx]) != len(lines[idx].lstrip(' ')) + indent):
+        print("WARNING: Incorrect indentation at line " + str(lineNumber) + ": " + lines[idx].rstrip())
 
       cmd = Comando(vaPorAddr)
       cmd.decodeTxt(lines[idx:], lineNumber)
