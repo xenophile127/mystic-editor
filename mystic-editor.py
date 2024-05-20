@@ -18,8 +18,9 @@ import mystic.romStats
 import mystic.address
 import mystic.battery
 import mystic.romexpand
+import mystic.checksum
 
-VERSION = '0.95.7-ember'
+VERSION = '0.95.8-ember'
 
 def printHelp():
   print('------------------------------------------------------------')
@@ -763,6 +764,9 @@ def main(argv):
 
     # exporto la gbs rom con música
     mystic.romSplitter.exportGbsRom(basePath+'/audio.gb')
+
+    # Calculate and record the correct checksums for the header
+    mystic.checksum.fixChecksums()
 
     # exporto nueva rom
     mystic.romSplitter.exportRom(basePath + '/newRom.gb')
