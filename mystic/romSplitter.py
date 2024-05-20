@@ -1376,6 +1376,9 @@ def burnSongsHeaders(filepath):
   f.close()
   canciones.decodeTxt(lines)
 
+  # address of the pointer table
+  nroBank,address = mystic.address.addrMusic
+
   vaPorAddr = canciones.canciones[0].addrCh2
 
   for i in range(0,30):
@@ -1447,7 +1450,7 @@ def burnSongsHeaders(filepath):
       addrArray = mystic.util.hexaStr(strHexAddr)
 #      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
       # y quemo el channel 2
-      mystic.romSplitter.burnBank(0xf, vaPorAddr - 0x4000, melody2Rom)
+      mystic.romSplitter.burnBank(nroBank, vaPorAddr - 0x4000, melody2Rom)
       array.extend(melody2Rom)
       vaPorAddr += len(melody2Rom)
        
@@ -1457,7 +1460,7 @@ def burnSongsHeaders(filepath):
       addrArray = mystic.util.hexaStr(strHexAddr)
 #      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
       # y quemo el channel 1
-      mystic.romSplitter.burnBank(0xf, vaPorAddr - 0x4000, melody1Rom)
+      mystic.romSplitter.burnBank(nroBank, vaPorAddr - 0x4000, melody1Rom)
       array.extend(melody1Rom)
       vaPorAddr += len(melody1Rom)
 
@@ -1467,14 +1470,14 @@ def burnSongsHeaders(filepath):
       addrArray = mystic.util.hexaStr(strHexAddr)
 #      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
       # y quemo el channel 3
-      mystic.romSplitter.burnBank(0xf, vaPorAddr - 0x4000, melody3Rom)
+      mystic.romSplitter.burnBank(nroBank, vaPorAddr - 0x4000, melody3Rom)
       array.extend(melody3Rom)
       vaPorAddr += len(melody3Rom)
 
 #  print(mystic.util.strHexa(array))
 #  print('len: ' + str(len(array)))
 
-  mystic.romSplitter.burnBank(0xf, 0x4AC7 - 0x4000, array)
+  mystic.romSplitter.burnBank(nroBank, 0x4AC7 - 0x4000, array)
 
 def exportSpriteSheetHero():
   """ exporta sprite sheet del heroe """
