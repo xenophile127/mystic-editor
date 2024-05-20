@@ -1666,10 +1666,15 @@ class Comando:
       hexs = bloque.encodeRom()
       strHex = mystic.util.strHexa(hexs)
 
+      # Record the length of the conditional section.
+      # The length is limited to an eight bit value, so the maximum length is 255 bytes.
+      length = len(hexs)
       if(hasElse):
-        self.hexs.append( len(hexs)+2 )
-      else:
-        self.hexs.append( len(hexs) )
+        length += 2
+      if(length >= 0xff):
+        print("ERROR: Conditional clause is too long " + str(startLineNumber) + ": " + line)
+        raise ValueError("Attempted to record the value " + str(length) + " in an int8.")
+      self.hexs.append( length )
 
       strHex = mystic.util.strHexa(self.hexs)
 
