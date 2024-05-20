@@ -2421,7 +2421,8 @@ def burnScripts(filepath):
 #    print('va por bank: {:02x}'.format(vaPorBank))
 #    print('len(bank): {:04x}'.format(len(encodedBank)))
 
-    mystic.util.arrayToFile(encodedBank, basePath+'/scripts/scripts{:02x}.bin'.format(vaPorBank))
+     # Creates .bin files for each script bank for debugging.
+#    mystic.util.arrayToFile(encodedBank, basePath+'/scripts/scripts{:02x}.bin'.format(vaPorBank))
 
     # quemo los banks 0x0d y 0x0e
     mystic.romSplitter.burnBank(vaPorBank, 0x0000, encodedBank)
