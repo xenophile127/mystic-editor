@@ -284,8 +284,7 @@ class Scripts:
 
       # sanity test script length
       if(len(subArray) > 0x4000):
-        print('ERROR: Script {:04x} too large ({:04x} bytes) to fit in a bank.'.format(script.nro, len(subArray)))
-        return encodedBanks
+        raise Exception('ERROR: Script {:04x} too large ({:04x} bytes) to fit in a bank.'.format(script.nro, len(subArray)))
 
       # calculo addr donde termina
       proxAddr = vaPorAddr + len(subArray)
@@ -301,6 +300,8 @@ class Scripts:
       if(vaPorAddr < addrDeCorte and proxAddr >= addrDeCorte):
         # cambio al bank siguiente
         vaPorBanco += 1
+        if(vaPorBanco > 3):
+          raise Exception('ERROR: Script {:04x} reaches address {:04x} in script bank {:04x}.'.format(script.nro, proxAddr, vaPorBanco))
 #        vaPorAddr = 0x4000
         vaPorAddr = 0x4000*vaPorBanco
         # el script anterior fué el último en entrar completo en el banco
@@ -1666,8 +1667,7 @@ class Comando:
       if(hasElse):
         length += 2
       if(length >= 0xff):
-        print("ERROR: Conditional clause is too long " + str(startLineNumber) + ": " + line)
-        raise ValueError("Attempted to record the value " + str(length) + " in an int8.")
+        raise Exception("ERROR: Conditional clause is too long " + str(startLineNumber) + ": " + line)
       self.hexs.append( length )
 
       strHex = mystic.util.strHexa(self.hexs)
