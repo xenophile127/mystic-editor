@@ -290,13 +290,8 @@ class Scripts:
       proxAddr = vaPorAddr + len(subArray)
       # si empieza antes pero termina después de 0x4000 (rom 'de' y custom)
 
-#      addrDeCorte = 0x4000
       addrDeCorte = 0x4000*(vaPorBanco+1)
-      # la rom 'jp' corta el banco un poco antes
-      if(lang == mystic.language.JAPAN):
-        addrDeCorte -= 4*16
 
-#      if(vaPorAddr < 0x4000 and proxAddr >= 0x4000):
       if(vaPorAddr < addrDeCorte and proxAddr >= addrDeCorte):
         # cambio al bank siguiente
         vaPorBanco += 1
