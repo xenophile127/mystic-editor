@@ -282,6 +282,11 @@ class Scripts:
       # lo codifico
       subArray = script.encodeRom()
 
+      # sanity test script length
+      if(len(subArray) > 0x4000):
+        print('ERROR: Script {:04x} too large ({:04x} bytes) to fit in a bank.'.format(script.nro, len(subArray)))
+        return encodedBanks
+
       # calculo addr donde termina
       proxAddr = vaPorAddr + len(subArray)
       # si empieza antes pero termina después de 0x4000 (rom 'de' y custom)
