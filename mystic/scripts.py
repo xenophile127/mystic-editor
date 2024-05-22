@@ -307,17 +307,6 @@ class Scripts:
 #        ultimoNroScriptBanco0d = script.nro - 1
         ultimoNroScriptBanco.append(script.nro - 1)
 
-        # si la rom es 'en', 'en_uk' ó 'fr' 
-        if(lang in [mystic.language.ENGLISH, mystic.language.ENGLISH_UK, mystic.language.FRENCH]):
-          # el script anterior se vuelve a copiar al principio del banco siguiente
-#          self.scripts[i-1].addr = 0x4000
-          self.scripts[i-1].addr = 0x4000*vaPorBanco
-          vaPorAddr += len(self.scripts[i-1].encodeRom())
-#          ultimoNroScriptBanco0d = script.nro - 2
-          # borro el ultimo coso agregado
-          del ultimoNroScriptBanco[-1]
-          ultimoNroScriptBanco.append(script.nro - 2)
-
 #      print('script {:04x} addrAnt {:04x} addrNew {:04x}'.format(script.nro, script.addr, vaPorAddr))
 
       # si no es un script vacío
