@@ -20,7 +20,7 @@ import mystic.battery
 import mystic.romexpand
 import mystic.checksum
 
-VERSION = '0.95.8-ember'
+VERSION = '0.95.9-ember'
 
 def printHelp():
   print('------------------------------------------------------------')
