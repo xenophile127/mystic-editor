@@ -286,6 +286,10 @@ class Scripts:
       if(len(subArray) > 0x4000):
         raise Exception('ERROR: Script {:04x} too large ({:04x} bytes) to fit in a bank.'.format(script.nro, len(subArray)))
 
+      # Save for debugging stats when this bank is finished
+      bankNum = vaPorBanco
+      bankFree = 0x4000 - (vaPorAddr % 0x4000)
+
       # calculo addr donde termina
       proxAddr = vaPorAddr + len(subArray)
       # si empieza antes pero termina después de 0x4000 (rom 'de' y custom)
@@ -304,6 +308,19 @@ class Scripts:
       if(vaPorAddr <= 0xd600 and proxAddr >= 0xd600):
         vaPorAddr = 0xd700
         proxAddr = vaPorAddr + len(subArray)
+
+      # If this is the final script or the final script in a bank or address overflow  then log some stats.
+      if((len(self.scripts) == script.nro + 1) or (bankNum != vaPorBanco) or (vaPorAddr > 0xffff)):
+        if(bankNum == 0):
+          startingScriptNro = 0
+        else:
+          startingScriptNro = 1 + ultimoNroScriptBanco[bankNum - 1]
+        if(bankNum == vaPorBanco):
+          endingScriptNro = script.nro
+          bankFree = 0x4000 - (proxAddr % 0x4000)
+        else:
+          endingScriptNro = script.nro - 1
+        print('DEBUG: Script {:04x} to {:04x} in bank {:02x} with 0x{:04x} bytes free'.format(startingScriptNro, endingScriptNro, 0x0d + bankNum, bankFree))
 
 #      print('script {:04x} addrAnt {:04x} addrNew {:04x}'.format(script.nro, script.addr, vaPorAddr))
 
@@ -366,7 +383,7 @@ class Scripts:
 
       sizeBank = min(len(array),0x4000)
       bank = array[:sizeBank]
-      print('adding script bank {:02x} [0x0000,0x{:04x}] (from script {:04x} to {:04x})'.format(0x0d + i, sizeBank, startingScriptNro, endingScriptNro))
+#      print('adding script bank {:02x} [0x0000,0x{:04x}] (from script {:04x} to {:04x})'.format(0x0d + i, sizeBank, startingScriptNro, endingScriptNro))
       encodedBanks.append(bank)
 
       startingScriptNro = endingScriptNro+1
