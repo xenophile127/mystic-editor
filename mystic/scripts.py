@@ -295,15 +295,21 @@ class Scripts:
       if(vaPorAddr < addrDeCorte and proxAddr >= addrDeCorte):
         # cambio al bank siguiente
         vaPorBanco += 1
-        if(vaPorBanco > 3):
-          raise Exception('ERROR: Script {:04x} reaches address {:04x} in script bank {:04x}.'.format(script.nro, proxAddr, vaPorBanco))
-#        vaPorAddr = 0x4000
         vaPorAddr = 0x4000*vaPorBanco
+        proxAddr = vaPorAddr + len(subArray)
         # el script anterior fué el último en entrar completo en el banco
-#        ultimoNroScriptBanco0d = script.nro - 1
         ultimoNroScriptBanco.append(script.nro - 1)
 
+      # Avoid a magic dead range used internally by RAM scripts.
+      if(vaPorAddr <= 0xd600 and proxAddr >= 0xd600):
+        vaPorAddr = 0xd700
+        proxAddr = vaPorAddr + len(subArray)
+
 #      print('script {:04x} addrAnt {:04x} addrNew {:04x}'.format(script.nro, script.addr, vaPorAddr))
+
+      # Check for overflow
+      if(vaPorBanco > 3 or proxAddr >= 0x10000):
+        raise Exception('ERROR: Script {:04x} reaches address {:04x} in script bank {:04x}.'.format(script.nro, proxAddr, vaPorBanco))
 
       # si no es un script vacío
       if(len(script.listComandos) > 0):
@@ -338,14 +344,20 @@ class Scripts:
       for script in self.scripts:
 
 #        print('nro: {:04x} starting: {:04x} ending: {:04x}'.format(script.nro, startingScriptNro, endingScriptNro))
-#        if(True):
-#        if(script.nro <= ultimoNroScriptBanco0d):
         # si está en el rango de scripts de este banco
         if(script.nro >= startingScriptNro and script.nro <= endingScriptNro):
           subArray = script.encodeRom()
 
+          # Hack around the magic dead range required to not break RAM scripts.
+          if(script.addr == 0xd700):
+            for j in range(len(array), 0x1700):
+              # Fill the skipped area with 0xdead.
+              if(j%2):
+                array.append(0xad)
+              else:
+                array.append(0xde)
+
           # voy extendiendo el array
-#          array0d.extend(subArray)
           array.extend(subArray)
 
 
