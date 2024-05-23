@@ -890,7 +890,10 @@ def burnPersonajes(filepath):
 #    print('iguales = ' + str(iguales))
 
   mystic.romSplitter.burnBank(0x3, 0x1f5a, array)
+
+  return personajes
  
+
 def exportBosses():
   """ exporta los monstruos grandes """
 
@@ -1031,7 +1034,7 @@ def exportGrupos3Personajes():
   f.close()
 
 
-def burnGrupos3Personajes(filepath):
+def burnGrupos3Personajes(filepath, personajes):
   """ quema los grupos de 3 personajes """
 
   f = open(filepath, 'r', encoding="utf-8")
@@ -1040,6 +1043,34 @@ def burnGrupos3Personajes(filepath):
 
   grupos = mystic.personaje.GruposPersonajes(0x3142)
   grupos.decodeTxt(lines)
+
+  # Check for overlap in sprite memory.
+  # If an aparicione actually uses multiple values this will give a false positive.
+  for grupo in grupos.grupos:
+   addrs = [grupo.addrA, grupo.addrB, grupo.addrC]
+   values = []
+   for apa in grupos.apariciones:
+     if apa.addr in addrs:
+       values.extend(apa.values)
+   values = list(set(values))
+   for i,v in enumerate(values[:-1]):
+     for personaje in personajes:
+       if(personaje.nroPersonaje == v):
+         base = personaje
+         break
+     for j,u in enumerate(values[i+1:]):
+       for personaje in personajes:
+         if(personaje.nroPersonaje == u):
+           comp = personaje
+           break
+       if(base.vramTileOffset < comp.vramTileOffset):
+         low = base
+         high = comp
+       else:
+         low = comp
+         high = base
+       if(low.vramTileOffset + 2 * low.cantDosTiles > high.vramTileOffset):
+         print('WARNING: Group {:02x} personajes {:02x} and {:02x} overlap'.format(grupo.nro, base.nroPersonaje, comp.nroPersonaje))
 
   array = grupos.encodeRom()
 

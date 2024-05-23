@@ -730,9 +730,9 @@ def main(argv):
     # quemo las animaciones para los personajes
     mystic.romSplitter.burnPersonajesAnimations(basePath + '/personajes/personajesAnimations.txt')
     # quemo los personajes en la rom
-    mystic.romSplitter.burnPersonajes(basePath + '/personajes/personajes.txt')
+    personajes = mystic.romSplitter.burnPersonajes(basePath + '/personajes/personajes.txt')
     # quemo los grupos de aparición de personajes
-    mystic.romSplitter.burnGrupos3Personajes(basePath + '/personajes/grupos3Personajes.txt')
+    mystic.romSplitter.burnGrupos3Personajes(basePath + '/personajes/grupos3Personajes.txt', personajes)
     # quemo los stats de los personajes
     mystic.romSplitter.burnPersonajeStats(basePath + '/personajes/personajeStats.txt')
 
