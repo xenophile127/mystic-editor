@@ -760,7 +760,7 @@ def main(argv):
     # concatena todas las canciones, default para roms nuevas (no compatible con la original)
 #    mystic.romSplitter.burnSongs(filepath=basePath+'/audio/songs.txt', ignoreAddrs=True)
     # compatible con la original (agrega los headers misteriosos sin uso)
-    mystic.romSplitter.burnSongsHeaders(filepath=basePath+'/audio/songs.txt')
+    mystic.romSplitter.burnSongs(filepath=basePath+'/audio/songs.txt')
 
     # exporto la gbs rom con música
     mystic.romSplitter.exportGbsRom(basePath+'/audio.gb')

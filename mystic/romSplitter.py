@@ -1241,12 +1241,12 @@ def exportSongs(exportLilypond=False):
     # lo creo
     os.makedirs(path)
 
-  nroBank,address = mystic.address.addrMusic
+  nroBank,addrMusic = mystic.address.addrMusic
   # cargo el banco 16 con las canciones
   bank = mystic.romSplitter.banks[nroBank]
 
   canciones = mystic.music.Canciones()
-  canciones.decodeRom(bank)
+  canciones.decodeRom(bank,addrMusic)
 
   lines = canciones.encodeTxt()
   strCanciones = '\n'.join(lines)
@@ -1288,8 +1288,8 @@ def exportSongs(exportLilypond=False):
       cancion.exportLilypond()
 
 
-def burnSongs(filepath, ignoreAddrs=False):
-  """ quema las canciones en el banco 0f real.  Si ignoreAddrs=True calcula addrs nuevas concatenando channels """
+def burnSongs(filepath):
+  """ this is @xenophile version of burnSongs """
 
   canciones = mystic.music.Canciones()
 
@@ -1298,217 +1298,44 @@ def burnSongs(filepath, ignoreAddrs=False):
   f.close()
   canciones.decodeTxt(lines)
 
-#  vaPorAddr = canciones.canciones[0].addrCh2
-  # empezamos por la dirección donde debe comenzar el primer canal de la primera canción
-  vaPorAddr = 0x4ac9
-
-  for cancion in canciones.canciones:
-#    print('cancy: ' + str(cancion))
-
-    melody2Rom = cancion.melody2.encodeRom()
-    melody1Rom = cancion.melody1.encodeRom()
-    melody3Rom = cancion.melody3.encodeRom()
-
-    # si no ignoramos los addrs
-    if(not ignoreAddrs):
-        
-      # quemo el puntero al addr del channel 2
-      punteroAddr = 0x0a12 + 6*cancion.nro + 0
-      strHexAddr = '{:02x} {:02x}'.format(cancion.addrCh2%0x100, cancion.addrCh2//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # y quemo el channel 2
-      mystic.romSplitter.burnBank(0xf, cancion.addrCh2 - 0x4000, melody2Rom)
-
-      # quemo el puntero al addr del channel 1
-      punteroAddr = 0x0a12 + 6*cancion.nro + 2
-      strHexAddr = '{:02x} {:02x}'.format(cancion.addrCh1%0x100, cancion.addrCh1//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # y quemo el channel 1
-      mystic.romSplitter.burnBank(0xf, cancion.addrCh1 - 0x4000, melody1Rom)
-
-      # quemo el puntero al addr del channel 3
-      punteroAddr = 0x0a12 + 6*cancion.nro + 4
-      strHexAddr = '{:02x} {:02x}'.format(cancion.addrCh3%0x100, cancion.addrCh3//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # y quemo el channel 3
-      mystic.romSplitter.burnBank(0xf, cancion.addrCh3 - 0x4000, melody3Rom)
-
-    else:
-
-      # quemo el puntero al addr del channel 2
-      punteroAddr = 0x0a12 + 6*cancion.nro + 0
-      strHexAddr = '{:02x} {:02x}'.format(vaPorAddr%0x100, vaPorAddr//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # recodifico la melody con su nuevo addr
-      cancion.melody2.addr = vaPorAddr
-      cancion.melody2.refreshLabels()
-      melody2Rom = cancion.melody2.encodeRom()
-      # y quemo el channel 2
-      mystic.romSplitter.burnBank(0xf, vaPorAddr - 0x4000, melody2Rom)
-      vaPorAddr += len(melody2Rom)#+0x10
-
-      # quemo el puntero al addr del channel 1
-      punteroAddr = 0x0a12 + 6*cancion.nro + 2
-      strHexAddr = '{:02x} {:02x}'.format(vaPorAddr%0x100, vaPorAddr//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # recodifico la melody con su nuevo addr
-      cancion.melody1.addr = vaPorAddr
-      cancion.melody1.refreshLabels()
-      melody1Rom = cancion.melody1.encodeRom()
-      # y quemo el channel 1
-      mystic.romSplitter.burnBank(0xf, vaPorAddr - 0x4000, melody1Rom)
-      vaPorAddr += len(melody1Rom)#+0x10
-
-      # quemo el puntero al addr del channel 3
-      punteroAddr = 0x0a12 + 6*cancion.nro + 4
-      strHexAddr = '{:02x} {:02x}'.format(vaPorAddr%0x100, vaPorAddr//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # recodifico la melody con su nuevo addr
-      cancion.melody3.addr = vaPorAddr
-      cancion.melody3.refreshLabels()
-      melody3Rom = cancion.melody3.encodeRom()
-      # y quemo el channel 3
-      mystic.romSplitter.burnBank(0xf, vaPorAddr - 0x4000, melody3Rom)
-      vaPorAddr += len(melody3Rom)#+0x10
-
-
-def burnSongsHeaders(filepath):
-  """ quema las canciones en el banco 0f real.  Agrega los headers misteriosos """
-
-  canciones = mystic.music.Canciones()
-
-  # el array con las canciones a quemar
-  array = []
-
-  # los tipos de headers misteriosos
-  header1 = [0xe7, 0x14]
-  header2 = []
-  header3 = [0xD0, 0x63, 0xA3, 0x64, 0x67, 0x66]
-  header4 = [0x19, 0x68, 0xBD, 0x68, 0xFF, 0x69]
-  header5 = [0x57, 0x6B, 0x83, 0x6C, 0xA9, 0x6D]
-  header6 = [0x8A, 0x6E, 0x5E, 0x6F, 0x31, 0x70]
-  header7 = [0x70, 0x70, 0x9F, 0x70, 0xF9, 0x70]
-  header8 = [0x18, 0x71, 0xAA, 0x71, 0x63, 0x72]
-  header9 = [0x49, 0x73, 0x1C, 0x74, 0x6F, 0x75]
-  header10 = [0xD3, 0x76, 0x1C, 0x77, 0x62, 0x77]
-  header11 = [0xA8, 0x77, 0x11, 0x78, 0xA3, 0x78]
-  header12 = [0xFA, 0x78, 0x24, 0x79, 0x48, 0x79]
-  header13 = [0x6B, 0x79, 0x84, 0x79, 0x9A, 0x79]
-  header14 = [0xB6, 0x79, 0xEA, 0x79, 0x1D, 0x7A]
-
-  f = open(filepath, 'r', encoding="utf-8")
-  lines = f.readlines()
-  f.close()
-  canciones.decodeTxt(lines)
+  # sorted by the order the data appears, which is sometimes different than the order in the table (nro)
+  canciones = sorted(canciones.canciones, key=lambda x: x.order)
 
   # address of the pointer table
   nroBank,address = mystic.address.addrMusic
 
-  vaPorAddr = canciones.canciones[0].addrCh2
+  # current data pointer
+  addrData = address + 0x4000 + 6 * len(canciones)
 
-  for i in range(0,30):
+  # for each song
+  for cancion in canciones:
 #    print('cancy: ' + str(cancion))
 
-    localNro = i
-    if(localNro == 16):
-      localNro = 17
-    elif(localNro == 17):
-      localNro = 16
+    # headers are useless, but preserved to ensure no unnecessary changes
+    if cancion.header is not None:
+      mystic.romSplitter.burnBank(nroBank, addrData - 0x4000, cancion.header)
+      addrData += len(cancion.header)
 
-    if(i <= 12):
-      array.extend(header1)
-      pass
-    elif(i == 13):
-      array.extend(header2)
-      pass
-    elif(i == 14):
-      array.extend(header1)
-    elif(i >= 15 and i <= 17):
-      array.extend(header2)
-      pass
-    elif(i == 18):
-      array.extend(header3)
-      pass
-    elif(i == 19):
-      array.extend(header4)
-      pass
-    elif(i == 20):
-      array.extend(header5)
-      pass
-    elif(i == 21):
-      array.extend(header6)
-      pass
-    elif(i == 22):
-      array.extend(header7)
-      pass
-    elif(i == 23):
-      array.extend(header8)
-      pass
-    elif(i == 24):
-      array.extend(header9)
-      pass
-    elif(i == 25):
-      array.extend(header10)
-      pass
-    elif(i == 26):
-      array.extend(header11)
-      pass
-    elif(i == 27):
-      array.extend(header12)
-      pass
-    elif(i == 28):
-      array.extend(header13)
-      pass
-    elif(i == 29):
-      array.extend(header14)
-      pass
+    # encode the three channels
+    melodyRom = []
+    melodyRom.append(cancion.melody2.encodeRom())
+    melodyRom.append(cancion.melody1.encodeRom())
+    melodyRom.append(cancion.melody3.encodeRom())
 
-    cancion = canciones.canciones[localNro]
-    melody2Rom = cancion.melody2.encodeRom()
-    melody1Rom = cancion.melody1.encodeRom()
-    melody3Rom = cancion.melody3.encodeRom()
+    # calculate the pointer address based on the song number, not the song order
+    punteroAddr = address +  6*cancion.nro
 
-    if(True):
-      # quemo el puntero al addr del channel 2
-      punteroAddr = 0x0a12 + 6*cancion.nro + 0
-      strHexAddr = '{:02x} {:02x}'.format(vaPorAddr%0x100, vaPorAddr//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-#      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # y quemo el channel 2
-      mystic.romSplitter.burnBank(nroBank, vaPorAddr - 0x4000, melody2Rom)
-      array.extend(melody2Rom)
-      vaPorAddr += len(melody2Rom)
-       
-      # quemo el puntero al addr del channel 1
-      punteroAddr = 0x0a12 + 6*cancion.nro + 2
-      strHexAddr = '{:02x} {:02x}'.format(vaPorAddr%0x100, vaPorAddr//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-#      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # y quemo el channel 1
-      mystic.romSplitter.burnBank(nroBank, vaPorAddr - 0x4000, melody1Rom)
-      array.extend(melody1Rom)
-      vaPorAddr += len(melody1Rom)
+    # for each channel
+    for melody in melodyRom:
+      # write the channel pointer
+      addr = [addrData&0xff, addrData//0x100]
+      mystic.romSplitter.burnBank(nroBank, punteroAddr, addr)
+      punteroAddr += 2
 
-      # quemo el puntero al addr del channel 3
-      punteroAddr = 0x0a12 + 6*cancion.nro + 4
-      strHexAddr = '{:02x} {:02x}'.format(vaPorAddr%0x100, vaPorAddr//0x100)
-      addrArray = mystic.util.hexaStr(strHexAddr)
-#      mystic.romSplitter.burnBank(0xf, punteroAddr, addrArray)
-      # y quemo el channel 3
-      mystic.romSplitter.burnBank(nroBank, vaPorAddr - 0x4000, melody3Rom)
-      array.extend(melody3Rom)
-      vaPorAddr += len(melody3Rom)
+      # write the channel data
+      mystic.romSplitter.burnBank(nroBank, addrData - 0x4000, melody)
+      addrData += len(melody)
 
-#  print(mystic.util.strHexa(array))
-#  print('len: ' + str(len(array)))
-
-  mystic.romSplitter.burnBank(nroBank, 0x4AC7 - 0x4000, array)
 
 def exportSpriteSheetHero():
   """ exporta sprite sheet del heroe """
