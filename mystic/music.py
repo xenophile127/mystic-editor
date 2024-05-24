@@ -896,6 +896,11 @@ class Melody:
                     cmd2 += 12
                   if(currentAccident == "#"):
                     cmd2 += 1
+                  elif(currentAccident == "-"):
+                    cmd2 -= 1
+
+                  if(cmd2 < 0):
+                    print('WARNING: C-flat (c-) not supported: ' + line)
 
                   # pongo un length default
                   if(currentLength == ''):
@@ -906,7 +911,10 @@ class Melody:
 #                  print('cnd1: ' + str(cmd1))
                   cmd = cmd1*0x10 + cmd2
                 # la creo
-                nota = NotaMusical(vaPorAddr, 1, cmd, None)
+                if(currentAccident != '-'):
+                  nota = NotaMusical(vaPorAddr, 1, cmd, None)
+                else:
+                  nota = NotaMusical(vaPorAddr, 1, cmd, None, None, True)
                 nota.labels = currentLabels
                 # y agrego al listado de notas
                 self.notas.append(nota)
@@ -925,6 +933,8 @@ class Melody:
             # si es un accidente
             elif(chara in ['#', '+']):
               currentAccident = '#'
+            elif(chara == '-'):
+              currentAccident = '-'
 
             elif(chara in ['0','1','2','3','4','5','6','7','8','9']):
               currentLength += chara
@@ -967,6 +977,8 @@ class Melody:
               cmd2 += 12
             if(currentAccident == "#"):
               cmd2 += 1
+            elif(currentAccident == "-"):
+              cmd2 -= 1
 
             # pongo un length default
             if(currentLength == ''):
@@ -977,7 +989,10 @@ class Melody:
             cmd = cmd1*0x10 + cmd2
           # la creo
           if(currentNote != ''):
-            nota = NotaMusical(vaPorAddr, 1, cmd, None)
+            if(currentAccident != '-'):
+              nota = NotaMusical(vaPorAddr, 1, cmd, None)
+            else:
+              nota = NotaMusical(vaPorAddr, 1, cmd, None, None, True)
             nota.labels = currentLabels
             # y agrego al listado de notas
             self.notas.append(nota)
@@ -1173,6 +1188,10 @@ class Melody:
 
         lilyNota = dicNotas[nota.cmd2]
 
+        # Handle flats
+        if('-' in str(nota)):
+          lilyNota = str(nota)[0] + 'es'
+
         saltaOctava = 0
         # si la nota es 0xc o mas alta (salvo 0xe que creo que es vibrato)
         if(nota.cmd2 in [0xc, 0xd]):
@@ -1218,7 +1237,7 @@ class Melody:
 class NotaMusical:
   """ representa una nota o comando musical de una melodía """
 
-  def __init__(self, addr, length, cmd, arg, arg2=None):
+  def __init__(self, addr, length, cmd, arg, arg2=None, flat=False):
     # la dirección física dentro del bank de la rom
     self.addr = addr
     # la longitud en bytes de la nota
@@ -1228,6 +1247,7 @@ class NotaMusical:
     # sus posibles argumentos
     self.arg = arg
     self.arg2 = arg2
+    self.flat = flat
 
     # guardo el primer y segundo char hexa del comando por separados
     self.cmd1 = (cmd & 0xf0)//0x10
@@ -1255,7 +1275,25 @@ class NotaMusical:
                  0xb : "b",
                  0xc : "c'",
                  0xd : "c'#",
-#                 0xe : "d'",
+                 0xe : "w",
+                 0xf : "r"
+               }
+
+    self.dicNotasFlat = {
+                 0x0 : "c",
+                 0x1 : "d-",
+                 0x2 : "d",
+                 0x3 : "e-",
+                 0x4 : "f-",
+                 0x5 : "f",
+                 0x6 : "g-",
+                 0x7 : "g",
+                 0x8 : "a-",
+                 0x9 : "a",
+                 0xa : "b-",
+                 0xb : "c-",
+                 0xc : "c'",
+                 0xd : "b'-",
                  0xe : "w",
                  0xf : "r"
                }
@@ -1393,7 +1431,11 @@ class NotaMusical:
 
     # sino, es una nota musical
     else:
-      lilyNota = self.dicNotas[self.cmd2]
+      if(self.flat == False):
+        lilyNota = self.dicNotas[self.cmd2]
+      else:
+        lilyNota = self.dicNotasFlat[self.cmd2]
+        print(lilyNota)
       lilyLength = str(self.cmd1)
 #      if(self.cmd1 == 0xb):
 #        lilyLength = 'coco'
