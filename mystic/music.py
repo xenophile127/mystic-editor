@@ -1435,7 +1435,6 @@ class NotaMusical:
         lilyNota = self.dicNotas[self.cmd2]
       else:
         lilyNota = self.dicNotasFlat[self.cmd2]
-        print(lilyNota)
       lilyLength = str(self.cmd1)
 #      if(self.cmd1 == 0xb):
 #        lilyLength = 'coco'
