@@ -17,6 +17,13 @@ def romExpand():
 #  romExpandIpsPatch('./roms/colorization/en_uk_256.ips')
 #  romExpandIpsPatch('./roms/colorization/en_uk_kkzero.ips')
 
+  romExpandIpsPatch('ipsFiles/patch-assembly-mana-99.ips')
+  romExpandIpsPatch('ipsFiles/patch-assembly-text-speed-1.ips')
+  romExpandIpsPatch('ipsFiles/patch-save-v3.ips')
+  romExpandIpsPatch('ipsFiles/patch-text-window-prefer-bottom.ips')
+  romExpandIpsPatch('ipsFiles/ripple-v2.ips')
+#  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
+
 #################################################
 def romExpandMBC5():
   """" This patches the rom to MBC5 and expands it to 32 banks. """
