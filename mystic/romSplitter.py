@@ -1446,6 +1446,11 @@ def burnSongs(filepath, nroBank, addrMusic):
   mystic.romSplitter.burnBank(nroBank, addrMusic, arrayMusic)
 
   vaPorAddr = addrMusic + len(arrayMusic)
+
+  addrAudio = 0x3a4f
+  if(vaPorAddr > addrAudio):
+    raise Exception("ERROR: Music overlaps audio by {:04x} bytes.".format(vaPorAddr - addrAudio))
+
   return vaPorAddr
 
 def exportAudio():
