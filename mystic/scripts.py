@@ -1035,6 +1035,11 @@ class Comando:
       self.size = 1
       self.strHex = mystic.util.strHexa(self.array[0:self.size])
 
+    elif(self.nro == 0xb7):
+      self.strCode = 'DEFAULT_EFFECT\n'
+      self.size = 1
+      self.strHex = mystic.util.strHexa(self.array[0:self.size])
+
     elif(self.nro == 0xbc):
       # fades in from both fade_out and wash_out
       self.strCode = 'FADE_IN\n'
@@ -1922,6 +1927,10 @@ class Comando:
       self.hexs.append(0xb6)
       self.sizeLines = 1
       self.sizeBytes = len(self.hexs)
+    elif(line.startswith('DEFAULT_EFFECT')):
+      self.hexs.append(0xb7)
+      self.sizeLines = 1
+      self.sizeBytes = len(self.hexs)
 
     elif(line.startswith('FADE_IN')):
       self.hexs.append(0xbc)
@@ -2302,6 +2311,8 @@ class Comando:
     elif(line.startswith('SOUND_EFFECT')):
       argTxt = line[len('SOUND_EFFECT')+1:]
       arg = int(argTxt, 16)
+      if(arg > 37):
+        print("WARNING: Sound effect {:02x} is out of range (01 to 25) at line ".format(arg) + str(startLineNumber) + ": " + line)
       self.hexs.append(0xf9)
       self.hexs.append(arg)
       self.sizeLines = 1
