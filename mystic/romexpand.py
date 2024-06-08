@@ -23,8 +23,11 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/patch-save-v3.ips')
   romExpandIpsPatch('ipsFiles/patch-text-window-prefer-bottom.ips')
   romExpandIpsPatch('ipsFiles/ripple-v2.ips')
+  romExpandIpsPatch('ipsFiles/shutter-effect-silent.ips')
+  romExpandIpsPatch('ipsFiles/skip-intro.ips')
   romExpandIpsPatch('ipsFiles/start-faded-white.ips')
   romExpandIpsPatch('ipsFiles/titlescreen-script.ips')
+  romExpandIpsPatch('ipsFiles/letterbox-off.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
