@@ -516,15 +516,15 @@ class Melody:
           array = array[3:]
           currAddr += nota.length
 
-      elif(cmd in [0xe3, 0xe5, 0xe6, 0xe7]):
+      elif(cmd in [0xe3, 0xe5, 0xe6, 0xe7, 0xea]):
         arg = array[1]
         nota = NotaMusical(currAddr, 2, cmd, arg)
         array = array[2:]
         currAddr += nota.length
 
-      #0xe1 AAAA (LOOP AAAA) (loop infinito)
+      #0xe1 AAAA (JUMP AAAA) (loop infinito)
       #0xe2 AAAA (REPEAT AAAA) (repite una vez)
-      elif(cmd in [0xe1, 0xe2, 0xe4, 0xe8]):
+      elif(cmd in [0xe1, 0xe2, 0xe4, 0xe8, 0xe9]):
         arg1 = array[1]
         arg2 = array[2]
         arg = arg2*0x100 + arg1
@@ -532,7 +532,7 @@ class Melody:
         array = array[3:]
         currAddr += nota.length
 
-      # eb 01 xxyy    (repetir una vez y saltar al addr yyxx ?) 
+      # eb 01 xxyy    (jumpif)
       elif(cmd in [0xeb]):
         arg = array[1]
         arg21 = array[2]
@@ -553,7 +553,7 @@ class Melody:
 #      print('nota: ' + str(nota))
       self.notas.append(nota)
 
-      # si el comando es loop o END
+      # si el comando es JUMP o END
       if(cmd in [0xe1, 0xff]):
         # termino la melodía
         break
@@ -568,8 +568,8 @@ class Melody:
     # por cada nota
     for nota in self.notas:
 #      print('notaa: ' + str(nota))
-      # si es un jump
-      if(nota.cmd in [0xe1, 0xe2, 0xeb]):
+      # si es un JUMP
+      if(nota.cmd in [0xe1, 0xe2, 0xe9, 0xeb]):
         addr = nota.arg
         # en el caso del jumpif
         if(nota.cmd == 0xeb):
@@ -770,6 +770,18 @@ class Melody:
 #          print('label: ' + label)
           currentLabels.append(label)
  
+        elif('COUNTER_B' in line):
+ 
+#          print('line: ' + line)
+          args = line.split()
+          counterArg = int(args[1],16)
+          nota = NotaMusical(vaPorAddr, 2, 0xea, counterArg)
+          nota.labels = currentLabels
+          self.notas.append(nota)
+          vaPorAddr += nota.length
+          currentLabels = []
+#          print('nota: ' + str(nota))
+
         elif('COUNTER' in line):
  
 #          print('line: ' + line)
@@ -804,6 +816,19 @@ class Melody:
           label = args[2]
 
           nota = NotaMusical(vaPorAddr, 4, 0xeb, arg)
+          nota.labels = currentLabels
+          nota.jumpLabel = label
+          self.notas.append(nota)
+          vaPorAddr += nota.length
+          currentLabels = []
+#          print('nota: ' + str(nota))
+
+        elif('REPEAT_B' in line):
+ 
+#          print('line: ' + line)
+          args = line.split()
+          label = args[1]
+          nota = NotaMusical(vaPorAddr, 3, 0xe9, None)
           nota.labels = currentLabels
           nota.jumpLabel = label
           self.notas.append(nota)
@@ -1017,14 +1042,14 @@ class Melody:
     # segunda pasada (para setear addr fisico de los labels)
     for nota in self.notas:
 
-      # si es una instrucción de salto (JUMP, REPEAT, JUMPIF)
-      if(nota.cmd in [0xe1, 0xe2, 0xeb]):
+      # si es una instrucción de salto (JUMP, REPEAT, REPEAT_B, JUMPIF)
+      if(nota.cmd in [0xe1, 0xe2, 0xe9, 0xeb]):
 #        print('note: ' + str(nota))
         jumpLabel = nota.jumpLabel
         for noty in self.notas:
           if(jumpLabel in noty.labels):
 #            print('lo encontré: {:4x}'.format(noty.addr))
-            if(nota.cmd in [0xe1, 0xe2]):
+            if(nota.cmd in [0xe1, 0xe2, 0xe9]):
               nota.arg = noty.addr
             else:
               nota.arg2 = noty.addr
@@ -1040,6 +1065,18 @@ class Melody:
       array.extend(nota.toBytes())
 
     return array
+
+  def indexLabel(self, label):
+    """ finds the index in self.notas of the first nota with the label """
+
+    j = 0
+    for noty in self.notas:
+      if(label in noty.labels):
+        return j
+      j += 1
+
+    # if we are here, there was no nota with the label
+    return -1
 
 
   def encodeLilypond(self):
@@ -1084,63 +1121,21 @@ class Melody:
                  0xf : 'r'
                }
 
-    # índice del último label visto
-    lastLabelIndex = 0
-
     # eligo valores de mano y octava default
     mano = 0x3
     octava = 1
-    # para cada nota
-    for i in range(0, len(self.notas)):
-      # la agarro
-      nota = self.notas[i]
-
-      # si tiene labels
-      if(len(nota.labels)>0):
-        # voy indicando que es la última vista con labels
-        lastLabelIndex = i
-
-      # si es REPEAT
-      if(nota.cmd == 0xe2):
-        # indico en el último label que hay repeat
-        self.notas[lastLabelIndex].repeatsTo = True
-
-
 
     # el contador de repeticiones
-    counter = 0
-    # si el repeat actual tiene jumpif
-    tieneJumpif = False
+    counter_a = 2
+    counter_b = 2
 
-    # vuelvo a iterar sobre las notas
-    for nota in self.notas:
+    i = 0
+    # itero sobre las notas
+    while(True):
+      nota = self.notas[i]
+#      print('nota: ' + str(nota))
 
-      # si es COUNTER
-      if(nota.cmd == 0xe3):
-        counter = nota.arg
-
-      # si tiene label que inicia un repeat
-      if(nota.repeatsTo):
-#        string += "  \\repeat volta " + str(counter) + " {\n"
-        string += "  \\repeat unfold " + str(counter) + " {\n"
-
-      # si es JUMPIF
-      if(nota.cmd == 0xeb):
-        string += "\n  | }\\alternative {{ \n"
-        # indico que tieneJumpif
-        tieneJumpif = True
-
-      # si es REPEAT
-      if(nota.cmd == 0xe2):
-        if(tieneJumpif):
-          string += "\n    }{}}\n"
-        else:
-          string += "\n    | }\n"
-        # reseteo tieneJumpif para la próxima
-        tieneJumpif = False
-
-
-      # si cambia donde va la mano
+      # si es un comando de octava
       if(nota.cmd1 == 0xd):
         mano = nota.cmd2
 #        print('mano: {:x} '.format(mano))
@@ -1166,21 +1161,74 @@ class Melody:
         elif(mano in [0xf]):
           octava -= 4
 
-#      print('comando: {:x}'.format(nota.cmd))
+      # si es COUNTER
+      elif(nota.cmd == 0xe3):
+        counter_a = nota.arg
 
-      # tempo
-      if(nota.cmd == 0xe7):
+      # si es REPEAT
+      elif(nota.cmd == 0xe2):
+        # if it has to repeat
+        if(counter_a > 1):
+          counter_a -= 1
+          i = self.indexLabel(nota.jumpLabel)-1
+        # if the repeating is done
+        else:
+#          print('i: ' + str(i) + ' length: ' + str(len(self.notas)))
+          # if the song is done
+          if(i == len(self.notas)-1):
+            # termino la canción
+#            print('done!!')
+            break
+          # otherwise
+          else:
+            # continue with the next note
+            pass
+
+      # si es REPEAT_B
+      elif(nota.cmd == 0xe9):
+        # if it has to repeat
+        if(counter_b > 1):
+          counter_b -= 1
+          i = self.indexLabel(nota.jumpLabel)-1
+        # if the repeating is done
+        else:
+#          print('i: ' + str(i) + ' length: ' + str(len(self.notas)))
+          # if the song is done
+          if(i == len(self.notas)-1):
+            # termino la canción
+#            print('done!!')
+            break
+          # otherwise
+          else:
+            # continue with the next note
+            pass
+
+      # si es COUNTER_B
+      elif(nota.cmd == 0xea):
+        counter_b = nota.arg
+
+      # si es JUMPIF
+      elif(nota.cmd == 0xeb):
+        if(counter_a == nota.arg):
+          i = self.indexLabel(nota.jumpLabel)-1
+        else:
+          pass
+
+      # si es TEMPO
+      elif(nota.cmd == 0xe7):
         # trato de emular el tempo correcto (no se cual es el valor exacto)
         string += '\n  \\tempo 4 = ' + str(int((100*nota.arg/84))) + '\n  '
 #        string += '\n  \\tempo 4 = ' + str(int(nota.arg)) + '\n  '
         pass
 
-      # si es un comando de octava
-      if(nota.cmd1 == 0xd):
-        # no muestro nada
-        pass
-      # si es un comando normal, o END
-      elif(nota.cmd1 == 0xe or nota.cmd == 0xff):
+      # si es END, o JUMP
+      elif(nota.cmd == 0xff or nota.cmd == 0xe1):
+        # termino la canción
+        break
+
+      # si es un comando normal
+      elif(nota.cmd1 == 0xe):
+        # no muestro nada y sigo
         pass
 
       # sino, es una nota musical
@@ -1219,6 +1267,7 @@ class Melody:
 
         string += ' '
 
+      i += 1
 
     return string
 
@@ -1420,6 +1469,14 @@ class NotaMusical:
     # instr e8
     elif(self.cmd == 0xe8):
       string += 'WAVETABLE {:x}'.format(self.arg)
+
+    # repeat_b
+    elif(self.cmd == 0xe9):
+      string += 'REPEAT_B ' + self.jumpLabel
+    # counter_b
+    elif(self.cmd == 0xea):
+      string += 'COUNTER_B {:x}'.format(self.arg)
+
     # jumpif
     elif(self.cmd == 0xeb):
       string += 'JUMPIF {:x} '.format(self.arg) + self.jumpLabel
