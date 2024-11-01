@@ -712,6 +712,8 @@ def burnPersonajeStats(filepath):
   personajeStatuses = []
   primero = True
   subLines = []
+# Quick hack so the final entry isn't skipped.
+  lines.append('------------ stats')
   for line in lines:
 #    print('line: ' + line)
     if('------------ stats' in line):
@@ -735,6 +737,8 @@ def burnPersonajeStats(filepath):
     array.extend(subArray)
 
   mystic.romSplitter.burnBank(0x3, 0x19fe, array)
+
+  return personajeStatuses
 
 
 def exportPersonajes():
@@ -1054,6 +1058,8 @@ def burnProjectiles(filepath):
 
   mystic.romSplitter.burnBank(0x9, 0x0479, array)
  
+  return projectiles
+
 
 def exportGrupos3Personajes():
   """ exporta grupos de 3 personajes a cargar """
@@ -1085,7 +1091,7 @@ def exportGrupos3Personajes():
   f.close()
 
 
-def burnGrupos3Personajes(filepath, personajes):
+def burnGrupos3Personajes(filepath, personajes, stats, projectiles):
   """ quema los grupos de 3 personajes """
 
   f = open(filepath, 'r', encoding="utf-8")
@@ -1103,17 +1109,23 @@ def burnGrupos3Personajes(filepath, personajes):
    for apa in grupos.apariciones:
      if apa.addr in addrs:
        values.extend(apa.values)
-   values = list(set(values))
+   # Remove duplicates from the list without changing the ordering.
+   values = list(dict.fromkeys(values))
    for i,v in enumerate(values[:-1]):
      for personaje in personajes:
        if(personaje.nroPersonaje == v):
          base = personaje
          break
+     # Check for invisiblity
+     if(base.cantDosTiles == 1):
+       continue
      for j,u in enumerate(values[i+1:]):
        for personaje in personajes:
          if(personaje.nroPersonaje == u):
            comp = personaje
            break
+       if(base.offsetBank8 == comp.offsetBank8):
+         continue
        if(base.vramTileOffset < comp.vramTileOffset):
          low = base
          high = comp
@@ -1121,7 +1133,23 @@ def burnGrupos3Personajes(filepath, personajes):
          low = comp
          high = base
        if(low.vramTileOffset + 2 * low.cantDosTiles > high.vramTileOffset):
-         print('WARNING: Group {:02x} personajes {:02x} and {:02x} overlap'.format(grupo.nro, base.nroPersonaje, comp.nroPersonaje))
+         print('WARNING: Personajes {:02x} and {:02x} overlap in grupo {:02x}'.format(base.nroPersonaje, comp.nroPersonaje, grupo.nro))
+
+       # Check for overlap of projectiles in sprite memory.
+       stats_base = stats[base.stats]
+       stats_comp = stats[comp.stats]
+       if(stats_base.projectile != stats_comp.projectile):
+         if ((stats_base.projectile != 0xff) and (stats_comp.projectile != 0xff)):
+           projectile_base = projectiles[stats_base.projectile]
+           projectile_comp = projectiles[stats_comp.projectile]
+           if(projectile_base.vramTileOffset < projectile_comp.vramTileOffset):
+             low = projectile_base
+             high = projectile_comp
+           else:
+             low = projectile_comp
+             high = projectile_base
+           if(low.vramTileOffset + 2 * low.cantDosTiles > high.vramTileOffset):
+             print('WARNING: Projectiles {:02x} and {:02x} of personajes {:02x} and {:02x} overlap in grupo {:02x}'.format(projectile_base.nroProjectile, projectile_comp.nroProjectile, base.nroPersonaje, comp.nroPersonaje, grupo.nro))
 
   array = grupos.encodeRom()
 

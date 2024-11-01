@@ -20,7 +20,7 @@ import mystic.battery
 import mystic.romexpand
 import mystic.checksum
 
-VERSION = '0.95.11-ember'
+VERSION = '0.95.12-ember'
 
 def printHelp():
   print('------------------------------------------------------------')
@@ -739,15 +739,13 @@ def main(argv):
     mystic.romSplitter.burnPersonajesAnimations(basePath + '/personajes/personajesAnimations.txt')
     # quemo los personajes en la rom
     personajes = mystic.romSplitter.burnPersonajes(basePath + '/personajes/personajes.txt')
-    # quemo los grupos de aparición de personajes
-    mystic.romSplitter.burnGrupos3Personajes(basePath + '/personajes/grupos3Personajes.txt', personajes)
     # quemo los stats de los personajes
-    mystic.romSplitter.burnPersonajeStats(basePath + '/personajes/personajeStats.txt')
-
+    stats = mystic.romSplitter.burnPersonajeStats(basePath + '/personajes/personajeStats.txt')
     # exporto los proyectiles
-    mystic.romSplitter.burnProjectiles(basePath + '/projectiles/01_projectiles.txt')
+    projectiles = mystic.romSplitter.burnProjectiles(basePath + '/projectiles/01_projectiles.txt')
 
-
+    # quemo los grupos de aparición de personajes
+    mystic.romSplitter.burnGrupos3Personajes(basePath + '/personajes/grupos3Personajes.txt', personajes, stats, projectiles)
 
 
     print('quemando bosses...')
