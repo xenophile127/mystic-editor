@@ -58,10 +58,8 @@ def detectRomLanguage(romPath):
       lang = JAPAN
       print(romPath + ': japan rom detected')
     else:
-      lang = -1
-      print(romPath + ': unable to detect language')
-      # termino con mensaje de error
-      sys.exit(1)
+      lang = ENGLISH
+      print(romPath + ': unable to detect language. Defaulting to english.')
 
   return lang
 
