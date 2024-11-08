@@ -587,7 +587,7 @@ class PersonajeStats:
     self.nose6    = 0x00
     self.projectile = 0x00
     self.nose7    = 0x00
-    self.nose8    = 0x00
+    self.statusInflicting = 0x00
     self.maybeExp = 0x00
     self.maybeGP  = 0x00
 
@@ -654,7 +654,7 @@ class PersonajeStats:
     lines.append('nose6:        {:02x}'.format(self.nose6))
     lines.append('projectile:   {:02x}'.format(self.projectile))
     lines.append('nose7:        {:02x}'.format(self.nose7))
-    lines.append('nose8:        {:02x}'.format(self.nose8))
+    lines.append('statusInflicting: {:02x}'.format(self.nose8))
     lines.append('maybeExp:     {:02x}'.format(self.maybeExp))
     lines.append('maybeGP:      {:02x}'.format(self.maybeGP))
 
@@ -699,9 +699,12 @@ class PersonajeStats:
       elif(line.startswith('nose7:')):
         strNose7 = line[len('nose7:'):].strip()
         self.nose7 = int(strNose7,16)
+      elif(line.startswith('statusInflicting:')):
+        strStatusInflicting = line[len('statusInflicting:'):].strip()
+        self.statusInflicting = int(strStatusInflicting,16)
       elif(line.startswith('nose8:')):
         strNose8 = line[len('nose8:'):].strip()
-        self.nose8 = int(strNose8,16)
+        self.statusInflicting = int(strNose8,16)
       elif(line.startswith('maybeExp:')):
         strMaybeExp = line[len('maybeExp:'):].strip()
         self.maybeExp = int(strMaybeExp,16)
@@ -710,7 +713,7 @@ class PersonajeStats:
         self.maybeGP = int(strMaybeGP,16)
 
   def __str__(self):
-    string = ' speed={:02x} {:02x} {:02x} {:02x} {:02x} DP?={:02x} AP?={:02x} {:02x} {:02x} {:02x} {:02x} {:02x} Exp?={:02x} GP?={:02x}'.format(self.speedSleep, self.nose1, self.nose2, self.nose3, self.nose4, self.maybeDP, self.maybeAP, self.nose5, self.nose6, self.projectile, self.nose7, self.nose8, self.maybeExp, self.maybeGP)
+    string = ' speed={:02x} {:02x} {:02x} {:02x} {:02x} DP?={:02x} AP?={:02x} {:02x} {:02x} {:02x} {:02x} {:02x} Exp?={:02x} GP?={:02x}'.format(self.speedSleep, self.nose1, self.nose2, self.nose3, self.nose4, self.maybeDP, self.maybeAP, self.nose5, self.nose6, self.projectile, self.nose7, self.statusInflicting, self.maybeExp, self.maybeGP)
 
     return string + ' ' + mystic.variables.personajes[self.nroStats] + '?'
 
