@@ -604,7 +604,7 @@ class PersonajeStats:
     self.nose6    = subArray[8]
     self.projectile = subArray[9]
     self.nose7    = subArray[10]
-    self.nose8    = subArray[11]
+    self.statusInflicting = subArray[11]
     self.maybeExp = subArray[12]
     self.maybeGP  = subArray[13]
 
@@ -622,7 +622,7 @@ class PersonajeStats:
     array.append(self.nose6)
     array.append(self.projectile)
     array.append(self.nose7)
-    array.append(self.nose8)
+    array.append(self.statusInflicting)
     array.append(self.maybeExp)
     array.append(self.maybeGP)
 
@@ -654,7 +654,7 @@ class PersonajeStats:
     lines.append('nose6:        {:02x}'.format(self.nose6))
     lines.append('projectile:   {:02x}'.format(self.projectile))
     lines.append('nose7:        {:02x}'.format(self.nose7))
-    lines.append('statusInflicting: {:02x}'.format(self.nose8))
+    lines.append('statusInflicting: {:02x}'.format(self.statusInflicting))
     lines.append('maybeExp:     {:02x}'.format(self.maybeExp))
     lines.append('maybeGP:      {:02x}'.format(self.maybeGP))
 
