@@ -127,6 +127,7 @@ class Scripts:
       # sino, el renglón tiene un CALL
       else:
         idx0 = line.find('CALL')
+        print(line)
 
         # busco si tiene label
         idxLabel = line.find('$')
@@ -976,6 +977,11 @@ class Comando:
     elif(self.nro == 0xa9):
       # Sets flag 0x7f to false if current map is 0x01, 0x0e, or 0x0f. Sets to true otherwise.
       self.strCode = 'CHECK_IF_CURRENT_MAP_HAS_SMALLMAP\n'
+      self.size = 1
+      self.strHex = mystic.util.strHexa(self.array[0:self.size])
+
+    elif(self.nro == 0xaa):
+      self.strCode = 'CLEAR_PLAYER_ATTACK\n'
       self.size = 1
       self.strHex = mystic.util.strHexa(self.array[0:self.size])
 
@@ -1859,6 +1865,11 @@ class Comando:
 
     elif(line.startswith('CHECK_IF_CURRENT_MAP_HAS_SMALLMAP')):
       self.hexs.append(0xa9)
+      self.sizeLines = 1
+      self.sizeBytes = len(self.hexs)
+
+    elif(line.startswith('CLEAR_PLAYER_ATTACK')):
+      self.hexs.append(0xaa)
       self.sizeLines = 1
       self.sizeBytes = len(self.hexs)
 
