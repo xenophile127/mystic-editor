@@ -28,6 +28,7 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/start-faded-white.ips')
   romExpandIpsPatch('ipsFiles/titlescreen-script.ips')
   romExpandIpsPatch('ipsFiles/letterbox-off.ips')
+  romExpandIpsPatch('ipsFiles/broadsword.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
