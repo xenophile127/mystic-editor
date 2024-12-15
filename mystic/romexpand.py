@@ -29,6 +29,7 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/titlescreen-script.ips')
   romExpandIpsPatch('ipsFiles/letterbox-off.ips')
   romExpandIpsPatch('ipsFiles/broadsword.ips')
+  romExpandIpsPatch('ipsFiles/patch-bugfix-heal-v6.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
