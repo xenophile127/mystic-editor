@@ -760,23 +760,23 @@ def main(argv):
     print('quemando scripts...')
     mystic.romSplitter.burnScripts(basePath + '/scripts/scripts.txt')
 
-#    print('burning songs...')
-#    nroBank, vaPorAddr = mystic.address.addrMusic
+    print('burning songs...')
+    nroBank, vaPorAddr = mystic.address.addrMusic
 #    print('addrMusic {:04x}'.format(vaPorAddr))
 
     # trata de mantener compatibilidad binaria con la rom original
-#    vaPorAddr = mystic.romSplitter.burnSongs(basePath+'/audio/01_songs.txt', nroBank, vaPorAddr)
+    vaPorAddr = mystic.romSplitter.burnSongs(basePath+'/audio/01_songs.txt', nroBank, vaPorAddr)
 #    print('vaPorAddr {:04x}'.format(vaPorAddr))
 
-#    print('burning sounds...')
+    print('burning sounds...')
     # quemo los efectos de sonido sfx
-#    mystic.romSplitter.burnSounds(filepath=basePath+'/audio/05_sounds.txt')
+    mystic.romSplitter.burnSounds(filepath=basePath+'/audio/05_sounds.txt')
 
 
     # exporto la gbs rom con música
-#    mystic.romSplitter.exportSongsRom(basePath+'/songs.gb')
+    mystic.romSplitter.exportSongsRom(basePath+'/songs.gb')
     # exporto la gbs rom con efectos de sonido
-#    mystic.romSplitter.exportSoundsRom(basePath+'/sounds.gb')
+    mystic.romSplitter.exportSoundsRom(basePath+'/sounds.gb')
 
 
     # Calculate and record the correct checksums for the header
