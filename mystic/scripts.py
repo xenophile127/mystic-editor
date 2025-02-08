@@ -306,8 +306,9 @@ class Scripts:
         ultimoNroScriptBanco.append(script.nro - 1)
 
       # Avoid a magic dead range used internally by RAM scripts.
-      if(vaPorAddr <= 0xd600 and proxAddr >= 0xd600):
-        vaPorAddr = 0xd700
+      if(vaPorAddr <= 0x9600 and proxAddr >= 0x9600):
+#        print("DEBUG: Moving script {:04x} from {:04x} to avoid dead range.".format(script.nro, vaPorAddr))
+        vaPorAddr = 0x9700
         proxAddr = vaPorAddr + len(subArray)
 
       # If this is the final script or the final script in a bank or address overflow  then log some stats.
