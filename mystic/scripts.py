@@ -368,7 +368,7 @@ class Scripts:
           subArray = script.encodeRom()
 
           # Hack around the magic dead range required to not break RAM scripts.
-          if(script.addr == 0xd700):
+          if(script.addr == 0x9700):
             for j in range(len(array), 0x1700):
               # Fill the skipped area with 0xdead.
               if(j%2):
