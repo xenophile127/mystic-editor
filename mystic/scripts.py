@@ -127,7 +127,6 @@ class Scripts:
       # sino, el renglón tiene un CALL
       else:
         idx0 = line.find('CALL')
-        print(line)
 
         # busco si tiene label
         idxLabel = line.find('$')
