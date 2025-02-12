@@ -1116,9 +1116,6 @@ def burnGrupos3Personajes(filepath, personajes, stats, projectiles):
        if(personaje.nroPersonaje == v):
          base = personaje
          break
-     # Check for invisiblity
-     if(base.cantDosTiles == 1):
-       continue
      for j,u in enumerate(values[i+1:]):
        for personaje in personajes:
          if(personaje.nroPersonaje == u):
