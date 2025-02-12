@@ -54,9 +54,7 @@ def setRomPath(romPath):
 
   # el romPath (ej: './roms/de.gb')
   mystic.address.romPath = romPath
-  idx0 = romPath.rindex('/')+1
-  idx1 = romPath.rindex('.')
-  romName = romPath[idx0:idx1]
+  romName = os.path.basename(romPath).split('.')[0]
   # el romName (ej: 'de')
   mystic.address.romName = romName
   # el path a la carpeta de base
