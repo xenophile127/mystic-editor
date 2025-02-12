@@ -819,5 +819,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
-  main(sys.argv[1:])
-
+  args = sys.argv[1:]
+  # Protect against DOS style newlines
+  if len(args):
+    args[-1] = args[-1].rstrip()
+  main(args)
