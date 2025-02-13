@@ -814,10 +814,6 @@ def main(argv):
     printHelp()
 
 
-  # si quiero testear algo
-  testPlayground()
-
-
 if __name__ == "__main__":
   args = sys.argv[1:]
   # Protect against DOS style newlines
