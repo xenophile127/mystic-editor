@@ -69,6 +69,17 @@ def setRomPath(romPath):
   mystic.address.language = lang
 
 
+def _addrToInt(strAddr):
+  """ converts a string 'bb:aaaa' into the tuple (bb,aaaa) """
+
+  strBb = strAddr[0:2]
+  strAaaa = strAddr[3:7]
+  bb = int(strBb,16)
+  aaaa = int(strAaaa,16)
+  addr = (bb,aaaa)
+
+  return addr
+
 def decodeTxt(lines):
   for line in lines:
 #    print('line: ' + line)
@@ -92,71 +103,42 @@ def decodeTxt(lines):
 #      mystic.address.basePath = basePath
 
     if(line.startswith('addrDictionary')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrDictionary = (bank, offset)
     elif(line.startswith('cantDictionary')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
+      string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
       cantDictionary = int(string, 10)
 #      print('cantDictionary: ' + str(cantDictionary))
       mystic.address.cantDictionary = cantDictionary
 
     elif(line.startswith('addrWindows')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrWindows = (bank, offset)
 
     elif(line.startswith('addrMagic')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrMagic = (bank, offset)
 
     elif(line.startswith('addrInitialWeapons')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrInitialWeapons = (bank, offset)
 
     elif(line.startswith('addrLoadStateStrangeBytes')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrLoadStateStrangeBytes = (bank, offset)
 
     elif(line.startswith('addrIntro')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrIntro = (bank, offset)
 
     elif(line.startswith('addrMaps')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrMaps = (bank, offset)
 
@@ -166,9 +148,7 @@ def decodeTxt(lines):
 
       listado = []
       for string in strLista:
-        idx = string.index(':')
-        bank = int(string[idx-2:idx],16)
-        offset = int(string[idx+1:idx+5], 16)
+        (bank, offset) = _addrToInt(string.strip())
 #        print('bank {:02x} offset {:04x}'.format(bank, offset))
         listado.append( (bank, offset) )
 
@@ -179,44 +159,27 @@ def decodeTxt(lines):
       mystic.address.cantSpritesInSheet = [int(addr,16) for addr in strLista]
 
     elif(line.startswith('addrExpTable')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrExpTable = (bank, offset)
 
 
     elif(line.startswith('addrScriptAddrDic')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrScriptAddrDic = (bank, offset)
     elif(line.startswith('cantScripts')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
+      string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
       cantScripts = int(string, 16)
 #      print('cantScripts: {:04x}'.format(cantScripts))
       mystic.address.cantScripts = cantScripts
 
     elif(line.startswith('addrMusic')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrMusic = (bank, offset)
 
     elif(line.startswith('addrSounds')):
-      idx = line.index('=')
-      string = line[idx+1:].strip().strip('\"').strip('\'')
-      idx = string.index(':')
-      bank = int(string[idx-2:idx],16)
-      offset = int(string[idx+1:idx+5], 16)
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrSounds = (bank, offset)
