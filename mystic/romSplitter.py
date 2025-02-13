@@ -2645,7 +2645,7 @@ def burnBank(bank, idx0, hexs):
 def exportExpTable():
   """ exporta la tabla de experiencia para subir de nivel """
 
-  nroBank, addr = mystic.address.expTable
+  nroBank, addr = mystic.address.addrExpTable
   bank = mystic.romSplitter.banks[nroBank]
   array = bank[addr:]
 
@@ -2695,7 +2695,7 @@ def burnExpTable(filepath):
 
 #    print('exp: {:06x}: {:02x} {:02x} {:02x}'.format(exp, byte1, byte2, byte3))
 
-  nroBank,addr = mystic.address.expTable
+  nroBank,addr = mystic.address.addrExpTable
 #  print('current addr: {:04x}'.format(addr))
 
   strArray = mystic.util.strHexa(array)

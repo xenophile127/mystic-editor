@@ -40,7 +40,7 @@ spriteSheetsAddr = [(0x08,0x00b0), (0x08,0x03b0), (0x08,0x06b0), (0x08,0x0938), 
 # cantidad de sprites de cada spriteSheet
 cantSpritesInSheet = [0x80, 0x80, 0x6c, 0x7b, 0x4c]
 
-expTable = (0x08, 0x0dd6)
+addrExpTable = (0x08, 0x0dd6)
 
 # cosas de scripts
 addrScriptAddrDic = (0x08, 0x0f05)
@@ -178,14 +178,14 @@ def decodeTxt(lines):
       strLista = line[idx+1:].strip().strip('\"').strip('\'').strip('[]').split(',')
       mystic.address.cantSpritesInSheet = [int(addr,16) for addr in strLista]
 
-    elif(line.startswith('expTable')):
+    elif(line.startswith('addrExpTable')):
       idx = line.index('=')
       string = line[idx+1:].strip().strip('\"').strip('\'')
       idx = string.index(':')
       bank = int(string[idx-2:idx],16)
       offset = int(string[idx+1:idx+5], 16)
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
-      mystic.address.expTable = (bank, offset)
+      mystic.address.addrExpTable = (bank, offset)
 
 
     elif(line.startswith('addrScriptAddrDic')):
