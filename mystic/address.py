@@ -15,41 +15,6 @@ romName = 'en'
 basePath = './en'
 
 
-
-# cosas del diccionario
-addrDictionary = (0x00, 0x3f1d)
-cantDictionary = 112
-
-# listado de ventanas en el bank02
-addrWindows = (0x02, 0x1baa)
-
-# listado de magia en el bank02
-addrMagic = (0x02, 0x1dda)
-
-addrInitialWeapons = (0x02, 0x2f10)
-
-addrLoadStateStrangeBytes = (0x02, 0x3aed)
-
-# la intro en el bank02
-addrIntro = (0x02, 0x3e8a)
-
-addrMaps = (0x05, 0x0000)
-
-# los offsets de 'world map', 'village', 'interior casa', 'interior cueva' y 'intro' respectivamente en el bank08
-spriteSheetsAddr = [(0x08,0x00b0), (0x08,0x03b0), (0x08,0x06b0), (0x08,0x0938), (0x08,0x0c1a)]
-# cantidad de sprites de cada spriteSheet
-cantSpritesInSheet = [0x80, 0x80, 0x6c, 0x7b, 0x4c]
-
-addrExpTable = (0x08, 0x0dd6)
-
-# cosas de scripts
-addrScriptAddrDic = (0x08, 0x0f05)
-cantScripts = 0x054a
-
-# the songs
-addrMusic = (0x0f, 0x0a12)
-addrSounds = (0x0f, 0x3b3c)
-
 def setRomPath(romPath):
 
   # el romPath (ej: './roms/de.gb')
