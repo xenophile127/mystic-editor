@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger()
 
 import mystic.romSplitter
 import mystic.romStats
@@ -306,7 +308,6 @@ class Scripts:
 
       # Avoid a magic dead range used internally by RAM scripts.
       if(vaPorAddr <= 0x9600 and proxAddr >= 0x9600):
-#        print("DEBUG: Moving script {:04x} from {:04x} to avoid dead range.".format(script.nro, vaPorAddr))
         vaPorAddr = 0x9700
         proxAddr = vaPorAddr + len(subArray)
 
@@ -321,7 +322,7 @@ class Scripts:
           bankFree = 0x4000 - (proxAddr % 0x4000)
         else:
           endingScriptNro = script.nro - 1
-        print('DEBUG: Script {:04x} to {:04x} in bank {:02x} with 0x{:04x} bytes free'.format(startingScriptNro, endingScriptNro, 0x0d + bankNum, bankFree))
+        logger.debug('Script {:04x} to {:04x} in bank {:02x} with 0x{:04x} bytes free'.format(startingScriptNro, endingScriptNro, 0x0d + bankNum, bankFree))
 
 #      print('script {:04x} addrAnt {:04x} addrNew {:04x}'.format(script.nro, script.addr, vaPorAddr))
 
@@ -532,7 +533,7 @@ class Script:
       lineNumber = startLineNumber + idx
 
       if(len(lines[idx]) != len(lines[idx].lstrip(' ')) + indent):
-        print("WARNING: Incorrect indentation at line " + str(lineNumber) + ": " + lines[idx].rstrip())
+        logger.warn("Incorrect indentation at line " + str(lineNumber) + ": " + lines[idx].rstrip())
 
       cmd = Comando(vaPorAddr)
       cmd.decodeTxt(lines[idx:], lineNumber)
@@ -1587,7 +1588,7 @@ class Comando:
       # elimino el último (está vacío, por el espacio al final antes del paréntesis)
       removed = argsTxt.pop()
       if(len(removed)):
-        print("WARNING: IF arguments not terminated with a space at line " + str(startLineNumber) + ": " + line)
+        logger.warn("IF arguments not terminated with a space at line " + str(startLineNumber) + ": " + line)
 
       line0 = self.lines[0]
       origDeep = len(line0) - len(line0.lstrip(' '))
@@ -2323,7 +2324,7 @@ class Comando:
       argTxt = line[len('SOUND_EFFECT')+1:]
       arg = int(argTxt, 16)
       if(arg > 37):
-        print("WARNING: Sound effect {:02x} is out of range (01 to 25) at line ".format(arg) + str(startLineNumber) + ": " + line)
+        logger.warn("Sound effect {:02x} is out of range (01 to 25) at line ".format(arg) + str(startLineNumber) + ": " + line)
       self.hexs.append(0xf9)
       self.hexs.append(arg)
       self.sizeLines = 1

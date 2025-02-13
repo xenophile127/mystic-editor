@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import logging
 
 # command line arguments
 import sys
@@ -815,6 +816,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
+  logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
   args = sys.argv[1:]
   # Protect against DOS style newlines
   if len(args):

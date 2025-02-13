@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger()
 
 import mystic.address
 import mystic.util
@@ -925,7 +927,7 @@ class Melody:
                     cmd2 -= 1
 
                   if(cmd2 < 0):
-                    print('WARNING: C-flat (c-) not supported: ' + line)
+                    logger.warn('C-flat (c-) not supported: ' + line)
 
                   # pongo un length default
                   if(currentLength == ''):

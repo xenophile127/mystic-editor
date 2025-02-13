@@ -1,5 +1,8 @@
 import os
 import shutil
+import logging
+logger = logging.getLogger()
+
 
 import mystic.address
 import mystic.tileset
@@ -1130,7 +1133,7 @@ def burnGrupos3Personajes(filepath, personajes, stats, projectiles):
          low = comp
          high = base
        if(low.vramTileOffset + 2 * low.cantDosTiles > high.vramTileOffset):
-         print('WARNING: Personajes {:02x} and {:02x} overlap in grupo {:02x}'.format(base.nroPersonaje, comp.nroPersonaje, grupo.nro))
+         logger.warn('Personajes {:02x} and {:02x} overlap in grupo {:02x}'.format(base.nroPersonaje, comp.nroPersonaje, grupo.nro))
 
        # Check for overlap of projectiles in sprite memory.
        stats_base = stats[base.stats]
@@ -1146,7 +1149,7 @@ def burnGrupos3Personajes(filepath, personajes, stats, projectiles):
              low = projectile_comp
              high = projectile_base
            if(low.vramTileOffset + 2 * low.cantDosTiles > high.vramTileOffset):
-             print('WARNING: Projectiles {:02x} and {:02x} of personajes {:02x} and {:02x} overlap in grupo {:02x}'.format(projectile_base.nroProjectile, projectile_comp.nroProjectile, base.nroPersonaje, comp.nroPersonaje, grupo.nro))
+             logger.warn('Projectiles {:02x} and {:02x} of personajes {:02x} and {:02x} overlap in grupo {:02x}'.format(projectile_base.nroProjectile, projectile_comp.nroProjectile, base.nroPersonaje, comp.nroPersonaje, grupo.nro))
 
   array = grupos.encodeRom()
 
