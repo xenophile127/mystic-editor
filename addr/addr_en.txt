@@ -27,6 +27,7 @@ addrExpTable = 08:0dd6
 
 # cosas de scripts
 addrScriptAddrDic = 08:0f05
+addrScripts = 0d:0000
 cantScripts = 0x054a
 
 addrMusic = 0f:0a12

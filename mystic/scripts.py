@@ -36,10 +36,11 @@ class Scripts:
   def decodeRom(self):
     self.scripts = []
 
-    nroBank,address = mystic.address.addrScriptAddrDic
+    nroBankDic,addressDic = mystic.address.addrScriptAddrDic
+    nroBank,address = mystic.address.addrScripts
     cantScripts = mystic.address.cantScripts
 
-    bankDic = mystic.romSplitter.banks[nroBank]
+    bankDic = mystic.romSplitter.banks[nroBankDic]
 
 
     import random
@@ -48,25 +49,22 @@ class Scripts:
     bb = random.randint(0,0xff)
     length = 2*cantScripts
     # agrego info al stats
-    mystic.romStats.appendDato(nroBank, address, address+length, (rr, gg, bb), 'diccionario de addr de scripts')
+    mystic.romStats.appendDato(nroBankDic, addressDic, addressDic+length, (rr, gg, bb), 'diccionario de addr de scripts')
 
     # por cada nroScript
     for nroScript in range(0,cantScripts):
 
-      addr8 = address + 2*nroScript 
+      addrDic = addressDic + 2*nroScript 
 #      print('---addr8: {:04x} '.format(addr8))
 
-      addr = bankDic[addr8:addr8+2]
-      addr1 = addr[0]
-      addr2 = addr[1]
       # obtengo su addr
-      addr = addr2*0x100 + addr1
+      addr = 0x100 * bankDic[addrDic+1] + bankDic[addrDic]
 #      print('addr: {:04x}'.format(addr))
 
       script = Script(addr)
       script.nro = nroScript
 
-      banco = 0x0d
+      banco = nroBank
       while(addr >= 0x4000):
         banco += 1
         addr -= 0x4000

@@ -133,6 +133,10 @@ def decodeTxt(lines):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrScriptAddrDic = (bank, offset)
+    elif(line.startswith('addrScripts')):
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
+#      print('bank {:02x} offset {:04x}'.format(bank, offset))
+      mystic.address.addrScripts = (bank, offset)
     elif(line.startswith('cantScripts')):
       string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
       cantScripts = int(string, 16)

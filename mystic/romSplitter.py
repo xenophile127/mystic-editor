@@ -2570,7 +2570,7 @@ def exportScripts():
 
 
 def burnScripts(filepath):
-  """ compila el script.txt indicado y quema los scripts en los bancos 0x0d y 0x0e, y el dicionario de addrs en banco 0x08 """
+  """ compila el script.txt indicado y quema los scripts en los bancos, y el dicionario de addrs en banco 0x08 """
 
   scripts = mystic.scripts.Scripts()
 
@@ -2591,7 +2591,8 @@ def burnScripts(filepath):
 #  iguales = mystic.util.compareFiles(basePath+'/banks/bank_14/bank_14.bin', basePath+'/scripts/scripts0e.bin', 0, len(array0e))
 #  print('iguales 0e: ' + str(iguales))
 
-  vaPorBank = 0x0d
+  bank,addr = mystic.address.addrScripts
+  vaPorBank = bank
   for encodedBank in encodedBanks:
 
 #    print('va por bank: {:02x}'.format(vaPorBank))
