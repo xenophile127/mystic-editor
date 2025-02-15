@@ -73,7 +73,7 @@ class Bosses:
       stringDamage = ''
       if(vaPorAddr+0x4000 in addressesDamage):
         idx = addressesDamage.index(vaPorAddr+0x4000)
-        stringDamage = mystic.variables.bosses[idx] + ' damage\n'
+        stringDamage = 'boss_' + mystic.variables.bosses[idx] + ' damage\n'
         f.write('---- ' + stringDamage)
 
       damage = BossDamage()
@@ -168,7 +168,7 @@ class Bosses:
       stringInnBehaviour = ''
       if(vaPorAddr+0x4000 in addressesInnBeh):
         idx = addressesInnBeh.index(vaPorAddr+0x4000)
-        stringInnBehaviour = mystic.variables.bosses[idx] + ' inn_behaviour'
+        stringInnBehaviour = 'boss_' + mystic.variables.bosses[idx] + ' inn_behaviour'
 
       stringStart = ''
       if(vaPorAddr+0x4000 in addressesStart):
@@ -178,7 +178,7 @@ class Bosses:
       stringDeath = ''
       if(vaPorAddr+0x4000 in addressesDeath):
         idx = addressesDeath.index(vaPorAddr+0x4000)
-        stringDeath = mystic.variables.bosses[idx] + ' death'
+        stringDeath = 'boss_' + mystic.variables.bosses[idx] + ' death'
 
       if(stringInnBehaviour != '' or stringStart != '' or stringDeath != ''):
         f.write('---- addr: {:04x}'.format(vaPorAddr+0x4000) + ' ' + stringStart + ' ' + stringDeath + ' ' + stringInnBehaviour + '\n')
@@ -285,7 +285,7 @@ class Bosses:
           stringTile = ''
           if(vaPorAddr+0x4000 in addressesSortTiles):
             idx = addressesSortTiles.index(prevAddrSortTile+0x4000)
-            stringTile = mystic.variables.bosses[idx] + ' sort-tiles'
+            stringTile = 'boss_' + mystic.variables.bosses[idx] + ' sort-tiles'
           strHexa = mystic.util.strHexa(arrayTiles)
           self.bossesSortTiles.append(arrayTiles)
           f.write('--- sortTiles: {:04x} '.format(prevAddrSortTile) + stringTile + '\n' + strHexa + '\n')
