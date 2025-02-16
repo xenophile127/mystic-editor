@@ -26,6 +26,8 @@ cantSpritesInSheet = [0x80, 0x80, 0x6c, 0x7b, 0x4a]
 
 addrExpTable = 08:0dd6
 
+addrTilesets = 0c:0000
+
 # cosas de scripts
 addrScriptAddrDic = 08:0f05
 addrScripts = 0d:0000

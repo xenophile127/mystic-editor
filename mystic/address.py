@@ -128,6 +128,11 @@ def decodeTxt(lines):
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrExpTable = (bank, offset)
 
+    elif(line.startswith('addrTilesets')):
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
+#      print('bank {:02x} offset {:04x}'.format(bank, offset))
+      mystic.address.addrTilesets = (bank, offset)
+
 
     elif(line.startswith('addrScriptAddrDic')):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))

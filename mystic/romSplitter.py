@@ -451,6 +451,8 @@ def burnFont():
 def exportTilesets():
   """ exporta los cinco tilesets """
 
+  nroBank,addr = mystic.address.addrTilesets
+
   basePath = mystic.address.basePath
   path = basePath + '/tilesets'
   # si el directorio no existía
@@ -470,7 +472,7 @@ def exportTilesets():
     # para los primeros 4 tilesets
     if(nroTileset < 4):
       tileset = mystic.tileset.Tileset(16,16)
-      banco12 = mystic.romSplitter.banks[12]
+      banco12 = mystic.romSplitter.banks[nroBank]
       array = banco12[0x1000*nroTileset:0x1000*(nroTileset+1)]
       tileset.decodeRom(array)
 
@@ -479,8 +481,9 @@ def exportTilesets():
 
     # sino, para el 5to tileset
     else:
+      nroBank -= 1
       tileset = mystic.tileset.Tileset(16,13)
-      banco11 = mystic.romSplitter.banks[11]
+      banco11 = mystic.romSplitter.banks[nroBank]
       array = banco11[0x0000:0x0d00]
       tileset.decodeRom(array)
 
@@ -493,6 +496,8 @@ def exportTilesets():
 
 def burnTilesets():
 
+  nroBank,addr = mystic.address.addrTilesets
+
   basePath = mystic.address.basePath
   path = basePath + '/tilesets'
  
@@ -504,14 +509,15 @@ def burnTilesets():
       tileset = mystic.tileset.Tileset(16,16)
       tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
       array = tileset.encodeRom()
-      mystic.romSplitter.burnBank(12, 0x1000*nroTileset, array)
+      mystic.romSplitter.burnBank(nroBank, 0x1000*nroTileset, array)
 
     # sino, para el 5to tileset
     else:
+      nroBank -= 1
       tileset = mystic.tileset.Tileset(16,13)
       tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
       array = tileset.encodeRom()
-      mystic.romSplitter.burnBank(11, 0x0000, array)
+      mystic.romSplitter.burnBank(nroBank, 0x0000, array)
 
 def burnSpriteSheets():
 
