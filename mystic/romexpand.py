@@ -30,6 +30,8 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/letterbox-off.ips')
   romExpandIpsPatch('ipsFiles/broadsword.ips')
   romExpandIpsPatch('ipsFiles/patch-bugfix-heal-v6.ips')
+  romExpandIpsPatch('ipsFiles/musicexpansion-v1.ips')
+  romExpandIpsPatch('ipsFiles/soundchannelrestore-v1.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
