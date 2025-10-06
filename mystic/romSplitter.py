@@ -1222,7 +1222,7 @@ def exportPersonajesAnimations():
 
   animCounter = 1
   tiles = []
-  for i in range(0,371):
+  for i in range(0,mystic.address.cantPersonajesAnimation):
 
     addr = 0x3b72+i*3
 
