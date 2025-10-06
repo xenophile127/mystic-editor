@@ -23,6 +23,7 @@ addrMaps = 12:0000
 spriteSheetsAddr = [08:00b0, 08:03b0, 08:06b0, 08:0938, 08:0c1a]
 # cantidad de sprites de cada spriteSheet
 cantSpritesInSheet = [0x80, 0x80, 0x6c, 0x7b, 0x4a]
+sizeMetatile = 6
 
 addrExpTable = 08:0dd6
 

@@ -1,5 +1,3 @@
-
-
 # cosas del diccionario
 addrDictionary = 00:3f1d
 cantDictionary = 112
@@ -23,10 +21,11 @@ cantBoss = 21
 addrMaps = 12:0000
 
 # los offsets de 'world map', 'village', 'interior casa', 'interior cueva' y 'intro' respectivamente en el bank08
-spriteSheetsAddr = [10:0000, 10:0800, 10:10d0, 10:17b0, 10:1f60]
+spriteSheetsAddr = [10:0000, 10:0800, 10:1100, 10:17e0, 10:1f90]
 # cantidad de sprites de cada spriteSheet
 #cantSpritesInSheet = [0x80, 0x8d, 0x6e, 0x7b, 0x4a]
-cantSpritesInSheet = [0x80, 0x8d, 0x6e, 0x7b, 0x4a]
+cantSpritesInSheet = [0x80, 0x90, 0x6e, 0x7b, 0x4a]
+sizeMetatile = 16
 
 addrExpTable = 08:0dd6
 

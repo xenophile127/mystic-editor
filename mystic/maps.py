@@ -898,7 +898,8 @@ class MapaExterior:
 #              sprite = sheet.sprites[0]
             sprites.append(sprite)
 
-    dibu = mystic.spriteSheet.SpriteSheet(10*self.sizeX,8*self.sizeY, sheet.nroSpriteSheet, 'png')
+    size= mystic.address.sizeMetatile
+    dibu = mystic.spriteSheet.SpriteSheet(10*self.sizeX,8*self.sizeY, size, sheet.nroSpriteSheet, 'png')
     dibu.sprites = sprites
 
     # y exporto el .png
@@ -1498,7 +1499,8 @@ class MapaInterior:
             newSprites.append(sprite)
 
 
-    dibu = mystic.spriteSheet.SpriteSheet(10*self.sizeX,8*self.sizeY, sheet.nroSpriteSheet, 'png')
+    size= mystic.address.sizeMetatile
+    dibu = mystic.spriteSheet.SpriteSheet(10*self.sizeX,8*self.sizeY,size, sheet.nroSpriteSheet, 'png')
     dibu.sprites = newSprites
 
     # y exporto el .png

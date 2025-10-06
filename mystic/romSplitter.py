@@ -524,12 +524,14 @@ def burnSpriteSheets():
   basePath = mystic.address.basePath
   path = basePath + '/spriteSheets'
 
+  size = mystic.address.sizeMetatile
+
   sheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
   spriteSheets = []
   # para cada una de los cinco spriteSheets 
   for nroSpriteSheet in range(0,5):
 
-    sheet = mystic.spriteSheet.SpriteSheet(16,8,nroSpriteSheet,sheetNames[nroSpriteSheet])
+    sheet = mystic.spriteSheet.SpriteSheet(16,8,size,nroSpriteSheet,sheetNames[nroSpriteSheet])
 
     filepath = path + '/sheet_{:02x}.txt'.format(nroSpriteSheet)
 #    print('filepath: ' + filepath)
@@ -562,18 +564,20 @@ def exportSpriteSheets():
     # lo creo
     os.makedirs(path)
 
+  size = mystic.address.sizeMetatile
+
   sheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
   mystic.romSplitter.spriteSheets = []
   # para cada una de los cinco spriteSheets 
   for nroSpriteSheet in range(0,5):
 
-    sheet = mystic.spriteSheet.SpriteSheet(16,8,nroSpriteSheet,sheetNames[nroSpriteSheet])
+    sheet = mystic.spriteSheet.SpriteSheet(16,8,size,nroSpriteSheet,sheetNames[nroSpriteSheet])
 
     nroBank,addr = mystic.address.spriteSheetsAddr[nroSpriteSheet]
     cant = mystic.address.cantSpritesInSheet[nroSpriteSheet]
     bank08 = mystic.romSplitter.banks[nroBank]
 
-    array = bank08[addr:addr+6*cant]
+    array = bank08[addr:addr+size*cant]
     sheet.decodeRom(array)
     # lo agrego a la lista
     mystic.romSplitter.spriteSheets.append(sheet)
@@ -582,7 +586,7 @@ def exportSpriteSheets():
     rr = random.randint(0,0xff)
     gg = random.randint(0,0xff)
     bb = random.randint(0,0xff)
-    mystic.romStats.appendDato(nroBank, addr, addr+6*cant, (rr, gg, bb), 'sprite sheet')
+    mystic.romStats.appendDato(nroBank, addr, addr+size*cant, (rr, gg, bb), 'sprite sheet')
 
     lines = sheet.encodeTxt()
     string = '\n'.join(lines)

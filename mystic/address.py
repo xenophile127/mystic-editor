@@ -123,6 +123,10 @@ def decodeTxt(lines):
       strLista = line[idx+1:].strip().strip('\"').strip('\'').strip('[]').split(',')
       mystic.address.cantSpritesInSheet = [int(addr,16) for addr in strLista]
 
+    elif(line.startswith('sizeMetatile')):
+      string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
+      mystic.address.sizeMetatile = int(string, 10)
+
     elif(line.startswith('addrExpTable')):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))

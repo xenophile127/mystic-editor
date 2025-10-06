@@ -12,6 +12,7 @@ class Sprite:
     self.bloqueo = 0x00
     # si lastima, resbala, etc
     self.tipo = 0x00
+    self.palettes = []
 
 # -------------- byte 5 (indica nivel de bloqueo)
 #
@@ -70,6 +71,9 @@ class Sprite:
     self.tiles = [array[0], array[1], array[2], array[3]]
     self.bloqueo = array[4]
     self.tipo = array[5]
+    self.size = len(array)
+    if(self.size == 16):
+      self.palettes = [array[8], array[9], array[10], array[11]]
 
   def encodeRom(self):
     array = []
@@ -88,6 +92,8 @@ class Sprite:
     lines.append('tiles:      {:02x} {:02x} {:02x} {:02x}'.format(self.tiles[0], self.tiles[1], self.tiles[2], self.tiles[3]))
     lines.append('bloqueo:    {:02x}'.format(self.bloqueo))
     lines.append('tipo:       {:02x}'.format(self.tipo))
+    if(len(self.palettes) != 0):
+      lines.append('palettes:   {:02x} {:02x} {:02x} {:02x}'.format(self.palettes[0], self.palettes[1], self.palettes[2], self.palettes[3]))
 
     return lines
 
@@ -112,6 +118,14 @@ class Sprite:
         strTipo = line[5:].strip()
         self.tipo = int(strTipo, 16)
 
+      elif('palettes:' in line):
+        sPalettes = line.split(':',1).strip().split()
+        palette0 = int(sPalettes[0],16)
+        palette1 = int(sPalettes[1],16)
+        palette2 = int(sPalettes[2],16)
+        palette3 = int(sPalettes[3],16)
+        self.palettes = [palette0, palette1, palette2, palette3]
+
   def exportPngFile(self, filepath):
 
     tileset = mystic.romSplitter.tilesets[self.nroTileset]
@@ -127,11 +141,12 @@ class Sprite:
 class SpriteSheet:
 
 #  def __init__(self):
-  def __init__(self, w, h, nroSpriteSheet, name):
+  def __init__(self, w, h, size, nroSpriteSheet, name):
     self.nroSpriteSheet = nroSpriteSheet
     self.name = name
     self.w = w # 16
     self.h = h # 8
+    self.size = size
     self.sprites = []
 
     # el nroTileset coincide con el nroSpriteSheet
@@ -146,14 +161,14 @@ class SpriteSheet:
     # mientras queden bytes por procesar
     while(len(array)>0):
       # agarro 6 bytes
-      subArray = array[0:6]
+      subArray = array[0:self.size]
       sprite = Sprite(self.nroTileset)
       # decodifico el sprite
       sprite.decodeRom(subArray)
       # lo agrego a la lista
       self.sprites.append(sprite)
       # y paso a los próximos 6 bytes
-      array = array[6:]
+      array = array[self.size:]
 
   def encodeRom(self):
     array = []
