@@ -1,5 +1,5 @@
 # cosas del diccionario
-addrDictionary = 00:3f1d
+addrDictionary = 00:3f1e
 cantDictionary = 112
 
 # listado de ventanas
