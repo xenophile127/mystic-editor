@@ -547,9 +547,6 @@ def burnSpriteSheets():
 #    print('array: ' + strArray)
 
     nroBank,addr = mystic.address.spriteSheetsAddr[nroSpriteSheet]
-    cant = mystic.address.cantSpritesInSheet[nroSpriteSheet]
-#    bank08 = mystic.romSplitter.banks[8]
-#    array = bank08[addr:addr+6*cant]
 
     mystic.romSplitter.burnBank(nroBank, addr, array)
  

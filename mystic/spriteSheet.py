@@ -160,15 +160,17 @@ class SpriteSheet:
 
     # mientras queden bytes por procesar
     while(len(array)>0):
-      # agarro 6 bytes
+      # agarro bytes
       subArray = array[0:self.size]
       sprite = Sprite(self.nroTileset)
       # decodifico el sprite
       sprite.decodeRom(subArray)
       # lo agrego a la lista
       self.sprites.append(sprite)
-      # y paso a los próximos 6 bytes
+      # y paso a los próximos
       array = array[self.size:]
+    if len(self.sprites) > (self.w * self.h):
+      self.h = (len(self.sprites) + self.w - 1) // self.w
 
   def encodeRom(self):
     array = []
@@ -266,10 +268,8 @@ class SpriteSheet:
     lines = []
 
     lines.append('<?xml version="1.0" encoding="UTF-8"?>')
-    lines.append('<tileset version="1.5" tiledversion="1.5.0" name="' + self.name + '" tilewidth="16" tileheight="16" tilecount="128" columns="16">')
-    lines.append(' <image source="sheet_{:02x}.png" width="256" height="128"/>'.format(self.nroSpriteSheet))
-#    lines.append(' <tile id="125" type="Otracosa"/>')
-#    lines.append(' <tile id="126" type="Evento"/>')
+    lines.append('<tileset version="1.5" tiledversion="1.5.0" name="' + self.name + '" tilewidth="16" tileheight="16" tilecount="' + str(len(self.sprites)) + '" columns="' + str(self.w) + '">')
+    lines.append(' <image source="sheet_{:02x}.png" width="' + str(self.w*16) + '" height="' + str(self.h*16) + '"/>'.format(self.nroSpriteSheet))
     lines.append('</tileset>')
 
     strTxt = '\n'.join(lines)
