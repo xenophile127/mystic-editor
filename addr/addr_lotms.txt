@@ -29,7 +29,11 @@ sizeMetatile = 16
 
 addrExpTable = 08:0dd6
 
+addrPersonajesStats = 03:1983
+addrPersonajes = 03:1edf
+cantPersonajes = 200
 cantPersonajesAnimation = 371
+addrGrupos = 03:319f
 
 addrTilesets = 1c:0000
 

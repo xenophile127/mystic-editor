@@ -132,9 +132,21 @@ def decodeTxt(lines):
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrExpTable = (bank, offset)
 
+    elif(line.startswith('addrPersonajesStats ')):
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
+      mystic.address.addrPersonajesStats = (bank, offset)
+    elif(line.startswith('addrPersonajes ')):
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
+      mystic.address.addrPersonajes = (bank, offset)
     elif(line.startswith('cantPersonajesAnimation')):
       string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
       mystic.address.cantPersonajesAnimation = int(string, 10)
+    elif(line.startswith('cantPersonajes ')):
+      string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
+      mystic.address.cantPersonajes= int(string, 10)
+    elif(line.startswith('addrGrupos ')):
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
+      mystic.address.addrGrupos = (bank, offset)
 
     elif(line.startswith('addrTilesets')):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))

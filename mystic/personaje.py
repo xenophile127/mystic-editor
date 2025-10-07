@@ -144,7 +144,11 @@ class Personaje:
   def encodeTxt(self):
     lines = []
 
-    lines.append('\n------------ personaje: ' + mystic.variables.personajes[self.nroPersonaje] )
+    if(self.nroPersonaje < len(mystic.variables.personajes)):
+      name = mystic.variables.personajes[self.nroPersonaje]
+    else:
+      name = 'NPC_' + str(self.nroPersonaje)
+    lines.append('\n------------ personaje: ' + name )
     lines.append('nroPersonaje:   {:02x}'.format(self.nroPersonaje))
     lines.append('amistad:        {:02x}'.format(self.amistad))
 
@@ -249,7 +253,8 @@ class Personaje:
 class GruposPersonajes:
   """ representa el listado de grupos de 3 personajes? """
 
-  def __init__(self, addr):
+  def __init__(self, nroBank, addr):
+    self.nroBank = nroBank
     self.addr = addr
 
     self.grupos = []
@@ -273,15 +278,23 @@ class GruposPersonajes:
     rr = random.randint(0,0xff)
     gg = random.randint(0,0xff)
     bb = random.randint(0,0xff)
-    mystic.romStats.appendDato(0x03, 0x3142, vaPorAddr, (rr, gg, bb), 'grupos personajes')
+    mystic.romStats.appendDato(self.nroBank, self.addr, vaPorAddr, (rr, gg, bb), 'grupos personajes')
 
     # me quedo con la segunda parte (0x33d0 ?)
     array = array[length:]
     addr = vaPorAddr + 0x4000
 
+    appaAddrs = []
+    for g in self.grupos:
+      appaAddrs.append(g.addrA)
+      appaAddrs.append(g.addrB)
+      appaAddrs.append(g.addrC)
+    endAddr = sorted(appaAddrs)[-1]
+
     self.apariciones = []
     # y cargo las apariciones
-    for i in range(0,215):
+    i = 0
+    while not (addr > endAddr):
 
       apa = AparicionPersonaje(i)
       apa.addr = addr
@@ -291,11 +304,12 @@ class GruposPersonajes:
       arru = apa.encodeRom()
       array = array[len(arru):]
       addr += len(arru)
+      i += 1
 
     rr = random.randint(0,0xff)
     gg = random.randint(0,0xff)
     bb = random.randint(0,0xff)
-    mystic.romStats.appendDato(0x03, vaPorAddr, addr - 0x4000, (rr, gg, bb), 'aparición personajes')
+    mystic.romStats.appendDato(self.nroBank, vaPorAddr, addr - 0x4000, (rr, gg, bb), 'aparición personajes')
 
     addrsApas = [apa.addr for apa in self.apariciones]
     # vuelvo a recorrer los grupos
@@ -636,7 +650,10 @@ class PersonajeStats:
     # get all their names
     names = []
     for per in pers:
-      name = mystic.variables.personajes[per.nroPersonaje]
+      if(per.nroPersonaje < len(mystic.variables.personajes)):
+        name = mystic.variables.personajes[per.nroPersonaje]
+      else:
+        name = 'NPC_' + str(per.nroPersonaje)
       names.append(name)
 
 #    lines.append('\n------------ stats: ' + mystic.variables.personajes[self.nroStats] + '?' )
