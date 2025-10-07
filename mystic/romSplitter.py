@@ -24,9 +24,9 @@ import mystic.ippy
 #self.rom = []
 # los bancos
 banks = []
-# los cinco tilesets
+# los tilesets
 tilesets = []
-# los cinco spriteSheets
+# los spriteSheets
 spriteSheets = []
 # los mapas
 #mapas = None
@@ -449,9 +449,12 @@ def burnFont():
   mystic.romSplitter.burnBank(8, 0x1000*2+7*0x100, array)
 
 def exportTilesets():
-  """ exporta los cinco tilesets """
+  """ exporta los tilesets """
 
   nroBank,addr = mystic.address.addrTilesets
+
+  # There is a one-to-one mapping of metatilesets to tilesets.
+  count = len(mystic.address.spriteSheetsAddr)
 
   basePath = mystic.address.basePath
   path = basePath + '/tilesets'
@@ -461,8 +464,8 @@ def exportTilesets():
     os.makedirs(path)
 
   mystic.romSplitter.tilesets = []
-  # para cada uno de los cinco tilesets
-  for nroTileset in range(0,5):
+  # para cada uno de los tilesets
+  for nroTileset in range(0,count):
 
     import random
     rr = random.randint(0,0xff)
@@ -493,11 +496,14 @@ def burnTilesets():
 
   nroBank,addr = mystic.address.addrTilesets
 
+  # There is a one-to-one mapping of metatilesets to tilesets.
+  count = len(mystic.address.spriteSheetsAddr)
+
   basePath = mystic.address.basePath
   path = basePath + '/tilesets'
  
-  # para cada uno de los cinco tilesets
-  for nroTileset in range(0,5):
+  # para cada uno de los tilesets
+  for nroTileset in range(0,count):
 
     tileset = mystic.tileset.Tileset()
     tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))

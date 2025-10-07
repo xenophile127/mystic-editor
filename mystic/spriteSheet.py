@@ -119,7 +119,7 @@ class Sprite:
         self.tipo = int(strTipo, 16)
 
       elif('palettes:' in line):
-        sPalettes = line.split(':',1).strip().split()
+        sPalettes = line.split(':',1)[1].strip().split()
         palette0 = int(sPalettes[0],16)
         palette1 = int(sPalettes[1],16)
         palette2 = int(sPalettes[2],16)
