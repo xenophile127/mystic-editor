@@ -110,6 +110,11 @@ def decodeTxt(lines):
       string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
       mystic.address.typeMaps = int(string, 10)
 
+    elif(line.startswith('spriteSheetNames ')):
+      idx = line.index('=')
+      strLista = line[idx+1:].strip().strip('\"').strip('\'').strip('[]').split(',')
+      mystic.address.spriteSheetNames = [s.strip(' ').strip('\"').strip('\'') for s in strLista]
+
     elif(line.startswith('spriteSheetsAddr')):
       idx = line.index('=')
       strLista = line[idx+1:].strip().strip('\"').strip('\'').strip('[]').split(',')

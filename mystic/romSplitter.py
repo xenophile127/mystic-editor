@@ -526,10 +526,10 @@ def burnSpriteSheets():
 
   size = mystic.address.sizeMetatile
 
-  sheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
+  sheetNames = mystic.address.spriteSheetNames
   spriteSheets = []
-  # para cada una de los cinco spriteSheets 
-  for nroSpriteSheet in range(0,5):
+  # para cada una de los spriteSheets
+  for nroSpriteSheet in range(0,len(sheetNames)):
 
     sheet = mystic.spriteSheet.SpriteSheet(16,8,size,nroSpriteSheet,sheetNames[nroSpriteSheet])
 
@@ -563,10 +563,10 @@ def exportSpriteSheets():
 
   size = mystic.address.sizeMetatile
 
-  sheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
+  sheetNames = mystic.address.spriteSheetNames
   mystic.romSplitter.spriteSheets = []
-  # para cada una de los cinco spriteSheets 
-  for nroSpriteSheet in range(0,5):
+  # para cada una de los spriteSheets
+  for nroSpriteSheet in range(0,len(sheetNames)):
 
     sheet = mystic.spriteSheet.SpriteSheet(16,8,size,nroSpriteSheet,sheetNames[nroSpriteSheet])
 
