@@ -469,26 +469,21 @@ def exportTilesets():
     gg = random.randint(0,0xff)
     bb = random.randint(0,0xff)
 
-    # para los primeros 4 tilesets
-    if(nroTileset < 4):
-      tileset = mystic.tileset.Tileset(16,16)
-      banco12 = mystic.romSplitter.banks[nroBank]
-      array = banco12[0x1000*nroTileset:0x1000*(nroTileset+1)]
-      tileset.decodeRom(array)
-
-      # agrego info al stats
-      mystic.romStats.appendDato(0x0c, 0x1000*nroTileset, 0x1000*(nroTileset+1) , (rr, gg, bb), 'un tileset')
-
-    # sino, para el 5to tileset
+    # Hack. Rather than add individual counts or addresses in addr,
+    # assume that if tilesets have been moved then there's more room.
+    if (nroBank == 0x0c) and (nroTileset >= 4):
+      height = 13
     else:
-      nroBank -= 1
-      tileset = mystic.tileset.Tileset(16,13)
-      banco11 = mystic.romSplitter.banks[nroBank]
-      array = banco11[0x0000:0x0d00]
-      tileset.decodeRom(array)
+      height = 16
+    tileset = mystic.tileset.Tileset(16,height)
 
-      # agrego info al stats
-      mystic.romStats.appendDato(0x0b, 0x0000, 0x0d00, (rr, gg, bb), 'un tileset')
+    bank = mystic.romSplitter.banks[nroBank-(nroTileset//4)]
+    slot = nroTileset % 4
+    array = bank[0x1000*slot:0x1000*slot+height*16*16]
+    tileset.decodeRom(array)
+
+    # agrego info al stats
+    mystic.romStats.appendDato(nroBank-(nroTileset//4), 0x1000*slot, 0x1000*slot+height*16*16, (rr, gg, bb), 'un tileset')
 
     tileset.exportPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
 
@@ -504,20 +499,10 @@ def burnTilesets():
   # para cada uno de los cinco tilesets
   for nroTileset in range(0,5):
 
-    # para los primeros 4 tilesets
-    if(nroTileset < 4):
-      tileset = mystic.tileset.Tileset(16,16)
-      tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
-      array = tileset.encodeRom()
-      mystic.romSplitter.burnBank(nroBank, 0x1000*nroTileset, array)
-
-    # sino, para el 5to tileset
-    else:
-      nroBank -= 1
-      tileset = mystic.tileset.Tileset(16,13)
-      tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
-      array = tileset.encodeRom()
-      mystic.romSplitter.burnBank(nroBank, 0x0000, array)
+    tileset = mystic.tileset.Tileset()
+    tileset.importPngFile(path + '/tileset_{:02}.png'.format(nroTileset))
+    array = tileset.encodeRom()
+    mystic.romSplitter.burnBank(nroBank-(nroTileset//4), 0x1000*(nroTileset%4), array)
 
 def burnSpriteSheets():
 

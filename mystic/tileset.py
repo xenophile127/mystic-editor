@@ -155,7 +155,7 @@ class Tile:
 class Tileset:
   """ representa un tileset """
 
-  def __init__(self, w, h):
+  def __init__(self, w=0, h=0):
     self.w = w
     self.h = h
     self.tiles = []
@@ -223,6 +223,11 @@ class Tileset:
   def importPngFile(self, filepath):
     """ importa de un archivo .png de tileset """
 
+    r = png.Reader(filepath)
+    w,h,rows,info = r.read()
+    self.w = w // 8
+    self.h = h // 8
+
     # inicializo el array
     s = []
     for j in range(8*self.h):
@@ -231,9 +236,6 @@ class Tileset:
         row.append(3)
       s.append(row)
 
-
-    r = png.Reader(filepath)
-    w,h,rows,info = r.read()
     i,j = 0,0
     for row in rows:
       for val in row:
