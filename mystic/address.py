@@ -106,6 +106,9 @@ def decodeTxt(lines):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrMaps = (bank, offset)
+    elif(line.startswith('typeMaps ')):
+      string = line.split('=', 1)[1].strip().strip('\"').strip('\'')
+      mystic.address.typeMaps = int(string, 10)
 
     elif(line.startswith('spriteSheetsAddr')):
       idx = line.index('=')

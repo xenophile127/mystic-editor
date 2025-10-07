@@ -1002,24 +1002,38 @@ class BloqueExterior:
       # ni hago nada
       return
 
+    type = mystic.address.typeMaps
     cantSprites = 0
     i = 0
     sprites = []
     # mientras no estén los 80 sprites del bloque (8 filas x 10 cols)
-    while(cantSprites < 80):
-      byty = array[i]
+    if(type!=1):
+      while(cantSprites < 80):
+        byty = array[i]
 
-      cant = 1
-      nroSprite = byty & 0x7F
-      comp = byty & (0xFF - 0x7F)
-      if(comp != 0):
-        cant = compress
+        cant = 1
+        nroSprite = byty & 0x7F
+        comp = byty & (0xFF - 0x7F)
+        if(comp != 0):
+          cant = compress
 
-      for j in range(cant):
-        sprites.append(nroSprite)
-        cantSprites += 1
+        for j in range(cant):
+          sprites.append(nroSprite)
+          cantSprites += 1
 
-      i += 1
+        i += 1
+    else:
+      # New compression technique from Legend of the Mana Sword
+      while(cantSprites < 80):
+        byte = array[i]
+        count = 1
+        if(byte >= 0xf8):
+          count = (byte & 7) + 2
+          byte = array[i-1]
+        for j in range(count):
+          sprites.append(byte)
+          cantSprites += 1
+        i += 1
 
     i = 0
     j = 0
@@ -1182,13 +1196,34 @@ class BloqueExterior:
       # lo agarro
       line = self.sprites[j]
       # lo comprimo  
-      arrRenglon, fin = self._compressLine(line, compress)
+      if (mystic.address.typeMaps == 0):
+        arrRenglon, fin = self._compressLine(line, compress)
+      else:
+        arrRenglon = self._compressLine_New(line)
       # y voy acumulando
       array.extend(arrRenglon)
       j += 1
 
     return array
 
+# New Legend of the Mana Sword compression
+  def _compressLine_New(self, line):
+    array = []
+    while len(line):
+      count = 0
+      value = line[0]
+      for i in range(0,len(line)):
+        if (line[i] == value):
+          count += 1
+        else:
+          break
+      array.append(value)
+      if (count > 2):
+        array.append(0xf5 + count)
+      else:
+        count = 1
+      line = line[count:]
+    return array
 
   def _compressLine(self, line, compress):
     """ comprime un renglón del bloque """

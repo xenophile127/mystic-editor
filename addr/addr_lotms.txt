@@ -19,6 +19,7 @@ addrBoss = 04:0739
 cantBoss = 21
 
 addrMaps = 12:0000
+typeMaps = 1
 
 # los offsets de 'world map', 'village', 'interior casa', 'interior cueva' y 'intro' respectivamente en el bank08
 spriteSheetsAddr = [10:0000, 10:0800, 10:1100, 10:17e0, 10:1f90]
