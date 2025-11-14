@@ -31,8 +31,14 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/broadsword.ips')
   romExpandIpsPatch('ipsFiles/patch-bugfix-heal-v6.ips')
   romExpandIpsPatch('ipsFiles/musicexpansion-v1.ips')
+  romExpandIpsPatch('ipsFiles/8-extra-songs.ips')
   romExpandIpsPatch('ipsFiles/soundchannelrestore-v1.ips')
+#  romExpandIpsPatch('ipsFiles/move_sound_effects.ips')
+  romExpandIpsPatch('ipsFiles/only-poison-temp-music.ips')
   romExpandIpsPatch('ipsFiles/tileset_move.ips')
+#  romExpandIpsPatch('ipsFiles/nerf-monster_hp-33_percent.ips')
+#  romExpandIpsPatch('ipsFiles/remove_select_menu.ips')
+  romExpandIpsPatch('ipsFiles/patch-animation.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
