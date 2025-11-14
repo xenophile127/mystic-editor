@@ -2291,16 +2291,14 @@ def burnMapasTiled():
         subLine = line[idx:]
         strLine = subLine.split('"')[1]
         nroSpriteSheet = int(strLine, 16)
+        spriteAddr = 0x4000 + mystic.address.spriteSheetsAddr[nroSpriteSheet][1]
       elif('property name="nose"' in line):
         idx = line.index('value=')
         subLine = line[idx:]
         strLine = subLine.split('"')[1]
         nose = int(strLine, 16)
       elif('property name="spriteAddr"' in line):
-        idx = line.index('value=')
-        subLine = line[idx:]
-        strLine = subLine.split('"')[1]
-        spriteAddr = int(strLine, 16)
+        pass # Set according to nroSpriteSheet
       elif('property name="cantSprites"' in line):
         idx = line.index('value=')
         subLine = line[idx:]
