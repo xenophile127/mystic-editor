@@ -32,6 +32,7 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/patch-bugfix-heal-v6.ips')
   romExpandIpsPatch('ipsFiles/musicexpansion-v1.ips')
   romExpandIpsPatch('ipsFiles/soundchannelrestore-v1.ips')
+  romExpandIpsPatch('ipsFiles/tileset_move.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
