@@ -22,7 +22,6 @@ def romExpand():
   romExpandIpsPatch('ipsFiles/patch-graphics-animation-water-jiggle.ips')
   romExpandIpsPatch('ipsFiles/patch-save-v3.ips')
   romExpandIpsPatch('ipsFiles/patch-text-window-prefer-bottom.ips')
-  romExpandIpsPatch('ipsFiles/ripple-v2.ips')
   romExpandIpsPatch('ipsFiles/shutter-effect-silent.ips')
   romExpandIpsPatch('ipsFiles/skip-intro.ips')
   romExpandIpsPatch('ipsFiles/start-faded-white.ips')
@@ -39,6 +38,8 @@ def romExpand():
 #  romExpandIpsPatch('ipsFiles/nerf-monster_hp-33_percent.ips')
 #  romExpandIpsPatch('ipsFiles/remove_select_menu.ips')
   romExpandIpsPatch('ipsFiles/patch-animation.ips')
+  romExpandIpsPatch('ipsFiles/patch-twoframe-v2.ips')
+  romExpandIpsPatch('ipsFiles/ripple-v3.ips')
 
 #  romExpandIpsPatch('ipsFiles/save_magic_byte_e0.ips')
 
