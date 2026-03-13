@@ -46,6 +46,10 @@ def _addrToInt(strAddr):
   return addr
 
 def decodeTxt(lines):
+  mystic.address.sizeMetatile = 6
+  mystic.address.spriteSheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
+  mystic.address.typeMaps = 0
+
   for line in lines:
 #    print('line: ' + line)
 

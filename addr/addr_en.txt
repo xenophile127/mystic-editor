@@ -25,6 +25,12 @@ cantSpritesInSheet = [0x80, 0x80, 0x6c, 0x7b, 0x4c]
 
 addrExpTable = 08:0dd6
 
+addrPersonajesStats = 03:19fe
+addrPersonajes = 03:1f5a
+cantPersonajes = 191
+cantPersonajesAnimation = 371
+addrGrupos = 03:3142
+
 addrTilesets = 0c:0000
 
 # cosas de scripts
@@ -33,3 +39,4 @@ addrScripts = 0d:0000
 cantScripts = 0x054a
 
 addrMusic = 0f:0a12
+addrSounds = 0f:3b3c
