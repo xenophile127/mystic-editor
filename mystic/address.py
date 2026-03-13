@@ -181,10 +181,16 @@ def decodeTxt(lines):
       mystic.address.cantScripts = cantScripts
 
     elif(line.startswith('addrMusic')):
-      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
-#      print('bank {:02x} offset {:04x}'.format(bank, offset))
-      mystic.address.addrMusic = (bank, offset)
+      # Music can be either a simple address or a list.
+      idx = line.index('=')
+      strList = line[idx+1:].strip().strip('\"').strip('\'').strip('[]').split(',')
 
+      list = []
+      for string in strList:
+        (bank, offset) = _addrToInt(string.strip())
+        list.append( (bank, offset) )
+
+      mystic.address.addrMusic = list
     elif(line.startswith('addrSounds')):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))

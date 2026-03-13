@@ -1312,16 +1312,24 @@ def exportMonstruoGrandeDosTiles():
 def exportAudioJson():
   """ exporta el audio en formato json """
 
-  basePath = mystic.address.basePath
-  path = basePath + '/audio'
-  # si el directorio no existía
-  if not os.path.exists(path):
-    # lo creo
-    os.makedirs(path)
+  basePath = mystic.address.basePath + '/audio'
 
-  nroBank,addrMusic = mystic.address.addrMusic
-  # cargo el banco 16 con las canciones
-  bank = mystic.romSplitter.banks[nroBank]
+  addrMusic = mystic.address.addrMusic
+  for i in range(len(addrMusic)):
+    path = basePath
+    if (i > 0):
+      path = path + str(i)
+    # if the directory does not exist
+    if not os.path.exists(path):
+      # create it
+      os.makedirs(path)
+
+    nroBank,addr = addrMusic[i]
+    bank = mystic.romSplitter.banks[nroBank]
+    exportAudioJsonBank(bank, addr, path)
+
+def exportAudioJsonBank(bank, addrMusic, path):
+  """ export json audio from a bank """
 
   canciones = mystic.music.Canciones()
   canciones.decodeRom(bank,addrMusic)
@@ -1398,16 +1406,24 @@ def exportSongsXml():
 def exportSongs(exportLilypond=False):
   """ exporta las canciones """
 
-  basePath = mystic.address.basePath
-  path = basePath + '/audio'
-  # si el directorio no existía
-  if not os.path.exists(path):
-    # lo creo
-    os.makedirs(path)
+  basePath = mystic.address.basePath + '/audio'
 
-  nroBank,addrMusic = mystic.address.addrMusic
-  # cargo el banco 16 con las canciones
-  bank = mystic.romSplitter.banks[nroBank]
+  addrMusic = mystic.address.addrMusic
+  for i in range(len(addrMusic)):
+    path = basePath
+    if (i > 0):
+      path = path + str(i)
+    # if the directory does not exist
+    if not os.path.exists(path):
+      # create it
+      os.makedirs(path)
+
+    nroBank,addr = addrMusic[i]
+    bank = mystic.romSplitter.banks[nroBank]
+    exportSongsBank(bank, addr, path, exportLilypond)
+
+def exportSongsBank(bank, addrMusic, path, exportLilypond):
+  """ export the songs from one bank """
 
   canciones = mystic.music.Canciones()
   canciones.decodeRom(bank,addrMusic)
@@ -1449,13 +1465,14 @@ def exportSongs(exportLilypond=False):
     # si quiere que compile lilypond
     if(exportLilypond):
       # exporto lilypond!
-      cancion.exportLilypond()
+      cancion.exportLilypond(path)
 
-def burnSongs(filepath, nroBank, addrMusic):
+def burnSongs(path, nroBank, addrMusic):
   """ burn the songs into the rom """
 
   canciones = mystic.music.Canciones()
 
+  filepath = path + '/01_songs.txt'
   f = open(filepath, 'r', encoding="utf-8")
   lines = f.readlines()
   f.close()
@@ -1463,7 +1480,7 @@ def burnSongs(filepath, nroBank, addrMusic):
   canciones.decodeTxt(lines)
 
   # export to lilypond
-  canciones.exportLilypond()
+  canciones.exportLilypond(path)
 
   # address of the pointer table
 #  nroBank,addrMusic = mystic.address.addrMusic
@@ -1651,7 +1668,9 @@ def burnSounds(filepath):
 
 #  print('arraySounds: ' + mystic.util.strHexa(arraySounds))
   # burn into the rom
-  mystic.romSplitter.burnBank(nroBank, addrSounds, arraySounds)
+  # identical sounds need to be placed at the same position in each audio bank
+  for nroBank, addrMusic in mystic.address.addrMusic:
+    mystic.romSplitter.burnBank(nroBank, addrSounds, arraySounds)
 
 
 def exportSpriteSheetHero():

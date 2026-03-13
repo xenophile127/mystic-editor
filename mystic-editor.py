@@ -762,12 +762,14 @@ def main(argv):
     mystic.romSplitter.burnScripts(basePath + '/scripts/scripts.txt')
 
     print('burning songs...')
-    nroBank, vaPorAddr = mystic.address.addrMusic
-#    print('addrMusic {:04x}'.format(vaPorAddr))
 
-    # trata de mantener compatibilidad binaria con la rom original
-    vaPorAddr = mystic.romSplitter.burnSongs(basePath+'/audio/01_songs.txt', nroBank, vaPorAddr)
-#    print('vaPorAddr {:04x}'.format(vaPorAddr))
+    addrMusic =  mystic.address.addrMusic
+    which = ''
+    for i in range(len(addrMusic)):
+      nroBank, addr = addrMusic[i]
+      if (i > 0):
+        which = str(i)
+      mystic.romSplitter.burnSongs(basePath+'/audio' + which, nroBank, addr)
 
     print('burning sounds...')
     # quemo los efectos de sonido sfx

@@ -176,11 +176,11 @@ class Canciones:
     return array
 
 
-  def exportLilypond(self):
+  def exportLilypond(self, path):
     """ exports the songs to lilypond """
 
     for cancion in self.canciones:
-      cancion.exportLilypond()
+      cancion.exportLilypond(path)
 
 
 ##########################################################
@@ -430,11 +430,8 @@ class Cancion:
 
     return lines
 
-  def exportLilypond(self):
+  def exportLilypond(self, path):
 
-    basePath = mystic.address.basePath
-    path = basePath + '/audio'
- 
     fileTxt = 'song_{:02}.txt'.format(self.nro)
     fileLily = 'song_{:02}_lily.txt'.format(self.nro)
     fileMidi = 'song_{:02}_lily.midi'.format(self.nro)
