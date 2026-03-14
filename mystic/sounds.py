@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger()
 
 import mystic.address
 import mystic.util
@@ -51,8 +53,32 @@ class Sounds:
       addr2 = bank[baseCh4]
       addrCh4 = addr1*0x100 + addr2 - 0x4000
 
+      addrs.append( (addrCh1, addrCh4) )
+
+    # This is to handle a strange case:
+    # Sound commands that look like terminators.
+    # Sound commands start with a length. If that length is zero then in reality the engine treats them as
+    # a terminator, but one sound (33) contains what looks like they encoded sound commands with zero length.
+    addr = sorted({item for tup in addrs for item in tup})
+
+    for i in range(len(addrs)):
       soundEffect = SoundEffect(i)
-      soundEffect.decodeRom(bank, addrCh1, addrCh4)
+
+      addrCh1 = addrs[i][0]
+      addrCh4 = addrs[i][1]
+
+      idx = addr.index(addrCh1)
+      if idx < len(addr) - 1:
+        lenCh1 = addr[idx+1] - addr[idx]
+      else:
+        lenCh1 = 1 + bank[addrCh1:].index(0)
+      idx = addr.index(addrCh4)
+      if idx < len(addr) - 1:
+        lenCh4 = addr[idx+1] - addr[idx]
+      else:
+        lenCh4 = 1 + bank[addrCh4:].index(0)
+
+      soundEffect.decodeRom(addrCh1, addrCh4, bank[addrCh1:addrCh1+lenCh1], bank[addrCh4:addrCh4+lenCh4])
 
       self.sounds.append(soundEffect)
 
@@ -204,41 +230,36 @@ class SoundEffect:
     self.soundCmds1 = []
     self.soundCmds4 = []
 
-  def decodeRom(self, bank, addrCh1, addrCh4):
+  def decodeRom(self, addrCh1, addrCh4, arrayCh1, arrayCh4):
     self.addrCh1 = addrCh1
     self.addrCh4 = addrCh4
 
+    self.soundCmds1 = self._decodeRom(arrayCh1, addrCh1, 1)
 
-    self.soundCmds1 = []
-    vaPorAddr = addrCh1
-    self.soundCmds1 = self._decodeRom(bank, vaPorAddr, 1)
-
-    self.soundCmds4 = []
-    vaPorAddr = addrCh4
-    self.soundCmds4 = self._decodeRom(bank, vaPorAddr, 4)
+    self.soundCmds4 = self._decodeRom(arrayCh4, addrCh4, 4)
 
 
   def _decodeRom(self, bank, vaPorAddr, ch):
 
+    baseAddr = vaPorAddr
     soundCmds = []
 
-
-    cmd = bank[vaPorAddr]
+    cmd = bank[0]
     soundCmd = SoundCmd(vaPorAddr, ch, cmd)
-    soundCmd.decodeRom(bank[vaPorAddr:])
+    soundCmd.decodeRom(bank)
 
 #    print('soundCmd: ' + str(soundCmd))
     soundCmds.append(soundCmd)
 
     i = 0
-    while(soundCmd.cmd != 0x00):
+    while(soundCmd.terminator != True):
 
       array = soundCmd.encodeRom()
       vaPorAddr += len(array)
 
-      cmd = bank[vaPorAddr]
+      cmd = bank[vaPorAddr - baseAddr]
       soundCmd = SoundCmd(vaPorAddr, ch, cmd)
-      soundCmd.decodeRom(bank[vaPorAddr:])
+      soundCmd.decodeRom(bank[vaPorAddr - baseAddr:])
 
 #      print('soundCmd: ' + str(soundCmd))
       soundCmds.append(soundCmd)
@@ -262,7 +283,6 @@ class SoundEffect:
             soundyCmd.labels.append('label{:}'.format(lblCount))
             # incremento el contador de labels
             lblCount += 1
-
 
     return soundCmds
 
@@ -556,12 +576,21 @@ class SoundCmd:
     self.jumpLabel = None
     # lista de labels que se usan para saltar a este comando
     self.labels = []
+    self.terminator = False
 
   def decodeRom(self, array):
 
     cmd = array[0]
     self.cmd = cmd
-    if(cmd >= 0x01 and cmd <= 0xee):
+
+    if(cmd == 0x00):
+      if (len(array) == 1):
+        self.terminator = True
+        return
+      else:
+        logger.warn("Decoding sound command with length zero (0x00).")
+
+    if(cmd < 0xef):
 
       if(self.ch == 1):
         subData = [array[i] for i in range(1,6)]
@@ -597,9 +626,10 @@ class SoundCmd:
     return array
 
   def encodeTxt(self):
-    lines = []
+    if(self.terminator == True and len(self.params) == 0 and self.cmd == 0x00):
+      return ['END']
 
-    if(self.cmd >= 0x01 and self.cmd <= 0xee):
+    if(self.cmd < 0xef):
 
       if(self.ch == 1):
         line = 'LENGTH={:02x} NR10={:02x} NR11={:02x} NR12={:02x} NR13={:02x} NR14={:02x}'.format(self.cmd, self.params[0], self.params[1], self.params[2], self.params[3], self.params[4])
@@ -615,17 +645,10 @@ class SoundCmd:
       val = self.cmd % 0x10
       line = 'COUNTER ' + str(val)
 
-
-    elif(self.cmd == 0x00):
-
-      line = 'END'
-
     else:
       line = '{:02x}'.format(self.cmd)
 
-    lines.append(line)
-
-    return lines
+    return [line]
 
   def __str__(self):
     lines = self.encodeTxt()
