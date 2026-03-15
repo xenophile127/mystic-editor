@@ -221,9 +221,8 @@ class Scripts:
     subLines = []
 
 
-#  def _refreshLabels(self, nroBanco, ultimoNroScriptBanco0d):
-  def _refreshLabels(self, nroBanco, startingScriptNro, endingScriptNro):
-    """ refresca los labels de los CALLs con su addr física, según si es para el banco 0x0d ó 0x0e """
+  def _refreshLabels(self):
+    """ calculate real addresses for CALL commands """
 
     # recorro todos los scripts
     for script in self.scripts:
@@ -250,33 +249,18 @@ class Scripts:
         # actualizo el call con el addr físico
         cmd.strCode = 'CALL {:04x}'.format(addr)
 
-        # si es para el banco 0x0d pero el script no entra
-#        if(nroBanco == 0x0d and script.nro > ultimoNroScriptBanco0d):
-          # seteo addr en 0x0000
-#          cmd.hexs = [0x02, 0x00, 0x00]
-#          cmd.strCode = 'CALL {:04x}'.format(0x0000)
-
-
 
   def encodeRom(self):
-    # los bancos a devolver 
-#    array0d = []
-#    array0e = []
     encodedBanks = []
     # el último número de script de cada banco
     ultimoNroScriptBanco = []
 
     vaPorAddr = 0x0000
-    # el último script que entró en el banco 0d
-    ultimoNroScriptBanco0d = -1
-
-    lang = mystic.address.language
 
     # por cual bank vamos (contando desde 0)
     vaPorBanco = 0
 
     # para cada script
-#    for script in self.scripts:
     for i in range(0,len(self.scripts)):
       script = self.scripts[i]
       # lo codifico
@@ -353,9 +337,8 @@ class Scripts:
       # me fijo en cual script termina
       endingScriptNro = ultimoNroScriptBanco[i]
 
-#      self._refreshLabels(0x0d, ultimoNroScriptBanco0d)
       # refresco sus labels
-      self._refreshLabels(startingScriptsBank + i, startingScriptNro, endingScriptNro)
+      self._refreshLabels()
 
       # recorro todos los scripts
       for script in self.scripts:
@@ -392,33 +375,6 @@ class Scripts:
 
 
 
-#    self._refreshLabels(0x0d, ultimoNroScriptBanco0d)
-
-    # recorro todos los scripts
-#    for script in self.scripts:
-
-#      if(True):
-#      if(script.nro <= ultimoNroScriptBanco0d):
-#        subArray = script.encodeRom()
-
-        # voy extendiendo el array
-#        array0d.extend(subArray)
-
-#    self._refreshLabels(0x0e, ultimoNroScriptBanco0d)
-
-    # recorro todos los scripts
-#    for script in self.scripts:
-
-#      if(script.nro > ultimoNroScriptBanco0d):
-#        subArray = script.encodeRom()
-
-        # voy extendiendo el array
-#        array0e.extend(subArray)
-
-#    size0d = min(len(array0d),0x4000)
-#    size0e = min(len(array0e),0x4000)
-
-#    return array0d[:size0d], array0e[:size0e]
 
 ##########################################################
 class Script:
