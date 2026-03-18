@@ -92,7 +92,7 @@ def arrayToPng(array, w, h, filepath):
   f.close()
 
 
-def compareFiles(filepath1, filepath2, idx0, cantBytes):
+def compareFiles(filepath1, filepath2, idx0=0, cantBytes=None):
   """ compara si dos archivos binarios son iguales entre los índices indicados """
 
   iguales = True
@@ -103,6 +103,12 @@ def compareFiles(filepath1, filepath2, idx0, cantBytes):
   array2 = g.read()
   f.close()
   g.close()
+
+  if (cantBytes == None):
+    if (len(array1) > len(array2)):
+      cantBytes = len(array1)
+    else:
+      cantBytes = len(array2)
 
   for i in range(0, cantBytes):
 

@@ -373,48 +373,6 @@ def testPlayground():
 #  mystic.romSplitter.exportExpTable()
 #  mystic.romSplitter.burnExpTable('./en_uk/exp.txt')
 
-  modificarBateria = False
-#  modificarBateria = True
-  if(modificarBateria):
-#    saveFile = '/home/arathron/RetroPie/roms/gb/newRom.sav'
-    saveFile = '/home/arathron/newRom.sav'
-    save = mystic.battery.Save(saveFile)
-#    save.printLindo()
-    save.printBatt()
-
-
-#    save.slot[0].setFlag(0x0b, True)
-#    save.slot[0].setFlag(0x51, True)
-
-#    save.slot[0].setFlag(0x0d, True)
-#    save.slot[0].setFlag(0x27, True)
-#    save.slot[0].setFlag(0x48, True)
-#    save.slot[0].setFlag(0x52, False)
-
-#    save.slot[0].setFlagByLabel('AMANDA_ACOMPANIA', False)
-    save.slot[0].setFlagByLabel('FUJI_ACOMPANIA', True)
-    save.slot[0].setFlagByLabel('CHOCOBO_ACOMPANIA', False)
-    save.slot[0].setFlagByLabel('VENCIMOS_MEGAPEDE_CIENPIES', False)
-    save.slot[0].setFlagByLabel('BOGARD_NOS_DIO_MATTOCK', False)
-    save.slot[0].setFlagByLabel('BOGARD_DISCUTIO_SUMO', False)
-    save.slot[0].setFlagByLabel('ENCONTRAMOS_MATTOCK', False)
-    save.slot[0].setFlagByLabel('VENCIMOS_LOBITO', False)
-
-#    val = save.slot[0].getFlagByLabel('CHOCOBO_ACOMPANIA')
-#    print('val choco: ' + str(val))
-
-#    mm,xy,uu,vv = save.slot[0].getCoords()
-    # bogard
-#    save.slot[0].setCoords(0x06,0x32,10,10)
-    # lee
-    save.slot[0].setCoords(0x03,0x41,10,10)
-    # cibba
-#    save.slot[0].setCoords(0x0e,0x17,10,10)
-
-    save.slot[0].printFull()
-    # grabo al archivo!
-    save.saveFile()
-
 
 #  scripts = Scripts()
 #  scripts.decodeRom()
@@ -467,11 +425,6 @@ def testPlayground():
 #  print(string)
 
 
-
-#  iguales = mystic.util.compareFiles('./stockRoms/gbs_de.gb', './de/gbs.gb', 0x0000, 0x8000)
-#  print('gbs iguales = ' + str(iguales))
-
-
 #  mapas = Mapas()
 #  mapas.decodeRom()
 #  mystic.romSplitter.exportMapas(exportPngFile=False)
@@ -502,37 +455,8 @@ def testPlayground():
   pathNew = './en/newRom.gb'
 
   print('comparando ' + pathStock + ' con ' + pathNew)
-  iguales = mystic.util.compareFiles(pathStock, pathNew, 0x0000, 0x40000)
+  iguales = mystic.util.compareFiles(pathStock, pathNew)
   print('roms iguales = ' + str(iguales))
-
-
-
-
-#  iguales = mystic.util.compareFiles('/home/arathron/newRomOrig.sav', '/home/arathron/newRom.sav', 0x0000, 0x40000)
-#  print('save iguales = ' + str(iguales))
-
-
-
-
-
-  # la juego
-#  mystic.romSplitter.testRom(basePath + '/newRom.gb', 'vba')
-#  shutil.copyfile(basePath + '/newRom.gb', '/home/arathron/RetroPie/roms/gb/newRom.gb')
-#  mystic.romSplitter.testRom('/home/arathron/RetroPie/roms/gb/newRom.gb', 'vba-m')
-#  mystic.romSplitter.testRom(basePath + '/newRom.gb', 'vba-m2')
-#  mystic.romSplitter.testRom(basePath + '/newRom.gb', 'mgba')
-#  mystic.romSplitter.testRom('/home/arathron/newRom.gb', 'vba-m')
-
-
-#  iguales = mystic.util.compareFiles('./roms/gbs.gb', './game/banks/bank_15/bank_15.bin', 0x4000, 0x40000)
-#  iguales = mystic.util.compareFiles('./en/banks/bank_15/bank_15.bin','./fr/banks/bank_15/bank_15.bin', 0x0000, 0x4000)
-#  print('los gbs iguales = ' + str(iguales))
-
-  # la escucho
-#  mystic.romSplitter.testRom('./de/gbs.gb', 'vba')
-
-  # generates de README.md with the current version
-#  exportREADME()
 
 
 #################################
@@ -781,34 +705,22 @@ def main(argv):
     # exporto la gbs rom con efectos de sonido
     mystic.romSplitter.exportSoundsRom(basePath+'/sounds.gb')
 
-
-    # Calculate and record the correct checksums for the header
-    mystic.checksum.fixChecksums()
-
-    # exporto nueva rom
-    mystic.romSplitter.exportRom(basePath + '/newRom.gb')
-
-#    lang = mystic.address.language
-#    strLang = mystic.language.stockRomsLang[lang]
-#    print('strLang: ' + strLang)
-#    pathStock = './stockRoms/' + strLang + '.gb'
     pathStock = romPath
     pathNew = basePath + '/newRom.gb'
 
-    # exporto el .ips
+    # export the new rom with the old checksums for the comparison
+    mystic.romSplitter.exportRom(pathNew)
+    print('comparing ' + pathStock + ' with ' + pathNew)
+    iguales = mystic.util.compareFiles(pathStock, pathNew)
+
+    # export the new rom with the correct checksums
+    mystic.checksum.fixChecksums()
+    mystic.romSplitter.exportRom(pathNew)
+
+    # exporto the .ips
     mystic.romSplitter.exportIps(pathStock, pathNew, basePath + '/newRom.ips')
 
-    print('comparando ' + pathStock + ' con ' + pathNew)
-    iguales = mystic.util.compareFiles(pathStock, pathNew, 0x0000, 0x40000)
-    print('roms iguales = ' + str(iguales))
-
-    # la juego
-#    mystic.romSplitter.testRom(basePath + '/newRom.gb', 'vba')
-#    mystic.romSplitter.testRom(basePath + '/newRom.gb', 'mgba')
-
-#    shutil.copyfile(basePath + '/newRom.gb', '/home/arathron/RetroPie/roms/gb/newRom.gb')
-#    mystic.romSplitter.testRom('/home/arathron/RetroPie/roms/gb/newRom.gb', 'vba-m')
-
+    print('identical roms = ' + str(iguales))
 
     # termino el script
     sys.exit(0)
