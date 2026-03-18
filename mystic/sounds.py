@@ -46,7 +46,9 @@ class Sounds:
       baseCh1 = addrSounds + 2*i
       addr1 = bank[baseCh1+1]
       addr2 = bank[baseCh1]
-      addrCh1 = addr1*0x100 + addr2 - 0x4000
+      addrCh1 = addr1*0x100 + addr2
+      if (addrCh1 != 0):
+        addrCh1 -= 0x4000
 
       baseCh4 = addrSounds + 2*self.cantSFX + 2*i
       addr1 = bank[baseCh4+1]
@@ -68,12 +70,16 @@ class Sounds:
       addrCh4 = addrs[i][1]
 
       idx = addr.index(addrCh1)
-      if idx < len(addr) - 1:
+      if addrCh1 < 0x100:
+        lenCh1 = 0
+      elif idx < len(addr) - 1:
         lenCh1 = addr[idx+1] - addr[idx]
       else:
         lenCh1 = 1 + bank[addrCh1:].index(0)
       idx = addr.index(addrCh4)
-      if idx < len(addr) - 1:
+      if addrCh4 < 0x100:
+        lenCh4 = 0
+      elif idx < len(addr) - 1:
         lenCh4 = addr[idx+1] - addr[idx]
       else:
         lenCh4 = 1 + bank[addrCh4:].index(0)
@@ -95,7 +101,6 @@ class Sounds:
     dataArray.append(0x00)
     vaPorAddr += 1
 
-#    for i in range(0,35):
     for i in range(0,len(self.sounds)):
 
       sound = self.sounds[i]
@@ -104,25 +109,20 @@ class Sounds:
       sound.addrCh1 = vaPorAddr
       sound.refreshLabels()
       subArray = sound.encodeRomCh1()
-      # add the "mystery header" (deleted sfx ch1)
-      if(i == 33):
-        subArray = [0x00,0x00,0x00,0x00,0x00,0x80,0x00]
 
-
-      addrCh1 = vaPorAddr if len(subArray) > 0 else emptyAddr
-      # we add the addr dictionary
-      addrsCh1.append(addrCh1)
-      # we add the sfx data to the array
-      dataArray.extend(subArray)
-      vaPorAddr += len(subArray)
-
+      if (subArray == None):
+        addrsCh1.append(0x0000)
+      else:
+        addrCh1 = vaPorAddr if len(subArray) > 0 else emptyAddr
+        # we add the addr dictionary
+        addrsCh1.append(addrCh1)
+        # we add the sfx data to the array
+        dataArray.extend(subArray)
+        vaPorAddr += len(subArray)
 
       sound.addrCh4 = vaPorAddr
       sound.refreshLabels()
       subArray = sound.encodeRomCh4()
-      # add the "mystery header" (deleted sfx ch4)
-      if(i == 33): 
-        subArray = [0x00,0x00,0x00,0x00]
 
       addrCh4 = vaPorAddr if len(subArray) > 0 else emptyAddr
       # we add the addr dictionary
@@ -136,7 +136,8 @@ class Sounds:
     array1 = []
     for addr in addrsCh1:
 #      print('{:02} {:04x} - addr1: {:04x}'.format(i, addrSounds + 2*i, addr))
-      addr += 0x4000
+      if (addr != 0x0000):
+        addr += 0x4000
       array1.append(addr % 0x100)
       array1.append(addr // 0x100)
       i += 1
@@ -244,6 +245,9 @@ class SoundEffect:
     baseAddr = vaPorAddr
     soundCmds = []
 
+    if len(bank) == 0:
+      return [SoundCmd(vaPorAddr, ch, None)]
+
     cmd = bank[0]
     soundCmd = SoundCmd(vaPorAddr, ch, cmd)
     soundCmd.decodeRom(bank)
@@ -288,6 +292,9 @@ class SoundEffect:
 
 
   def encodeRomCh1(self):
+
+    if (self.soundCmds1[0].cmd == None):
+      return None
 
     array = []
 
@@ -392,14 +399,21 @@ class SoundEffect:
 #          print('addr: {:04x}'.format(addr))
           if(ch == 1):
             self.addrCh1 = addr
-            # indico por que addr va el comando actual
-            vaPorAddr = addr
           else:
             self.addrCh4 = addr
-            # indico por que addr va el comando actual
-            vaPorAddr = addr
+          # indico por que addr va el comando actual
+          vaPorAddr = addr
 
         # sino
+        elif(line == 'NULL'):
+
+          soundCmd = SoundCmd(vaPorAddr, ch, None)
+          if(ch == 1):
+            self.soundCmds1.append(soundCmd)
+          else:
+            self.soundCmds4.append(soundCmd)
+          currentLabels = []
+
         elif(line == 'END'):
 
           cmd = 0x00
@@ -626,6 +640,9 @@ class SoundCmd:
     return array
 
   def encodeTxt(self):
+    if(self.cmd == None):
+      return ['NULL']
+
     if(self.terminator == True and len(self.params) == 0 and self.cmd == 0x00):
       return ['END']
 
