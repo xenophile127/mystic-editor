@@ -15,7 +15,7 @@ addrLoadStateStrangeBytes = 02:3aed
 # la intro en el bank02
 addrIntro = 02:3e91
 
-addrBoss = 04:0739
+addrBoss = 04:0723
 cantBoss = 21
 
 addrMaps = 12:0000

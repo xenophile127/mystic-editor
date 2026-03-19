@@ -46,6 +46,7 @@ def _addrToInt(strAddr):
   return addr
 
 def decodeTxt(lines):
+  mystic.address.addrBoss = (0x04, 0x0739)
   mystic.address.sizeMetatile = 6
   mystic.address.spriteSheetNames = ['worldmap', 'city', 'inner', 'cave', 'title']
   mystic.address.typeMaps = 0
@@ -105,6 +106,11 @@ def decodeTxt(lines):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
 #      print('bank {:02x} offset {:04x}'.format(bank, offset))
       mystic.address.addrIntro = (bank, offset)
+
+    elif(line.startswith('addrBoss')):
+      (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))
+#      print('bank {:02x} offset {:04x}'.format(bank, offset))
+      mystic.address.addrBoss = (bank, offset)
 
     elif(line.startswith('addrMaps')):
       (bank, offset) = _addrToInt(line.split('=', 1)[1].strip().strip('\"').strip('\''))

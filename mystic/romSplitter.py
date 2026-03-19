@@ -956,9 +956,9 @@ def burnPersonajes(filepath):
 def exportBosses():
   """ exporta los monstruos grandes """
 
-#  print('--- 4:0739')
+  nroBank,addr = mystic.address.addrBoss
 
-  bank = mystic.romSplitter.banks[0x04]
+  bank = mystic.romSplitter.banks[nroBank]
   bosses = mystic.bosses.Bosses()
   bosses.decodeRom(bank)
 
@@ -1010,9 +1010,10 @@ def burnBosses(pathBosses, pathBossesDamage, pathBehaviour, pathActions, pathMin
   f.close()
   bosses.decodeAnimationsTxt(lines)
 
+  nroBank,addr = mystic.address.addrBoss
 
   array = bosses.encodeRom()
-  mystic.romSplitter.burnBank(0x4, 0x0739, array)
+  mystic.romSplitter.burnBank(nroBank, addr, array)
 
 def exportProjectiles():
   """ exporta las explosiones y cosas que arrojan los enemigos """
@@ -1821,16 +1822,17 @@ def exportSpriteSheetMonster():
   tileset.tiles = extraTiles
   tileset.exportPngFile(path + '/monster_10.png')
 
-  bank04 = mystic.romSplitter.banks[0x04]
+  nroBank,addr = mystic.address.addrBoss
+
+  bank = mystic.romSplitter.banks[nroBank]
   # tabla de los 21 monstruos grandes
   for i in range(0,21):
     # 24 bytes por monstruo
-    array = bank04[0x0739 + 24*i:0x0739 + 24*(i+1)]
+    array = bank[addr + 24*i:addr + 24*(i+1)]
 
 #    print('{:02} | '.format(i) + mystic.util.strHexa(array))
 
 
-  bank = mystic.romSplitter.banks[0x04]
   bosses = mystic.bosses.Bosses()
   bosses.decodeRom(bank)
 

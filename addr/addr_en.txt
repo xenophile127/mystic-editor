@@ -13,6 +13,8 @@ addrInitialWeapons = 02:2f10
 
 addrLoadStateStrangeBytes = 02:3aed
 
+addrBoss = 04:0739
+
 # la intro en el bank02
 addrIntro = 02:3e8a
 

@@ -27,7 +27,7 @@ class Bosses:
       # lo creo
       os.makedirs(path)
 
-    vaPorAddr = 0x0739
+    vaPorAddr = mystic.address.addrBoss[1]
     bossesAddr = vaPorAddr
 
     f = open(path + '/01_bosses.txt', 'w', encoding="utf-8")
@@ -36,7 +36,7 @@ class Bosses:
     for i in range(0,21):
       subArray = bank[vaPorAddr : vaPorAddr+24]
       strHexa = mystic.util.strHexa(subArray)
-#      print('boss: {:02x} - '.format(i) + strHexa)
+      print('boss: {:02x} - '.format(i) + strHexa)
 
       boss = mystic.bosses.Boss(i)
       boss.decodeRom(subArray)
