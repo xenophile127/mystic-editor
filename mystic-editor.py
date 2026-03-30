@@ -21,7 +21,7 @@ import mystic.battery
 import mystic.romexpand
 import mystic.checksum
 
-VERSION = '0.95.17-ember'
+VERSION = '0.95.18-ember'
 
 def printHelp():
   print('------------------------------------------------------------')
@@ -688,6 +688,17 @@ def main(argv):
     print('burning songs...')
 
     addrMusic =  mystic.address.addrMusic
+
+    # Two audio banks are supported for expanded music.
+    # In this case all the code is taken from the first specified bank and copied to the second.
+    if len(addrMusic) > 2:
+      raiseException("ERROR: Cannot support " + int(len(addrMusic)) + " audio banks.")
+    elif len(addrMusic) == 2:
+      source = mystic.romSplitter.banks[addrMusic[0][0]]
+      dest = mystic.romSplitter.banks[addrMusic[1][0]]
+      for i in range(0,0x4000):
+        dest[i] = source[i]
+
     which = ''
     for i in range(len(addrMusic)):
       nroBank, addr = addrMusic[i]
